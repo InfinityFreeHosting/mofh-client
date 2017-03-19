@@ -4,7 +4,11 @@ namespace HansAdema\MofhClient\Exception;
 
 use HansAdema\MofhClient\Exception\Availability\BlacklistedKeywordException;
 use HansAdema\MofhClient\Exception\Availability\DomainTooLongException;
+use HansAdema\MofhClient\Exception\Availability\DomainTooShortException;
+use HansAdema\MofhClient\Exception\Availability\HttpPrefixException;
 use HansAdema\MofhClient\Exception\Availability\IDNDomainException;
+use HansAdema\MofhClient\Exception\Availability\IllegalCharacterException;
+use HansAdema\MofhClient\Exception\Availability\TKDomainException;
 use HansAdema\MofhClient\Exception\CreateAccount\DomainExistsException;
 use HansAdema\MofhClient\Exception\CreateAccount\InvalidNameserversException;
 use HansAdema\MofhClient\Exception\CreateAccount\UsernameExistsException;
@@ -41,6 +45,11 @@ class Builder
             'This account is NOT currently suspended' => AccountNotSuspendedException::class,
             'the account must be active to change the password' => \HansAdema\MofhClient\Exception\Password\AccountNotActiveException::class,
             'error occured changing this password' => PasswordIdenticalException::class,
+            'domain name appears invalid (to short !)' => DomainTooShortException::class,
+            'Sorry we do not support hosting .tk domains on free hosting' => TKDomainException::class,
+            'Illegal charachters in domain name .epizzy.com' => IllegalCharacterException::class,
+            'The domain name choosen is not allowd' => BlacklistedKeywordException::class,
+            'http:// should NOT be added to the domain name' => HttpPrefixException::class,
         ];
     }
 
