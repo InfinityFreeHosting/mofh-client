@@ -47,7 +47,7 @@ class Builder
             'error occured changing this password' => PasswordIdenticalException::class,
             'domain name appears invalid (to short !)' => DomainTooShortException::class,
             'Sorry we do not support hosting .tk domains on free hosting' => TKDomainException::class,
-            'Illegal charachters in domain name .epizzy.com' => IllegalCharacterException::class,
+            'Illegal charachters in domain name' => IllegalCharacterException::class,
             'The domain name choosen is not allowd' => BlacklistedKeywordException::class,
             'http:// should NOT be added to the domain name' => HttpPrefixException::class,
         ];
