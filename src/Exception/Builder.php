@@ -10,6 +10,7 @@ use HansAdema\MofhClient\Exception\Availability\IDNDomainException;
 use HansAdema\MofhClient\Exception\Availability\IllegalCharacterException;
 use HansAdema\MofhClient\Exception\Availability\TKDomainException;
 use HansAdema\MofhClient\Exception\CreateAccount\DomainExistsException;
+use HansAdema\MofhClient\Exception\CreateAccount\DomainFromOtherResellerException;
 use HansAdema\MofhClient\Exception\CreateAccount\InvalidNameserversException;
 use HansAdema\MofhClient\Exception\CreateAccount\UsernameExistsException;
 use HansAdema\MofhClient\Exception\Password\PasswordIdenticalException;
@@ -39,8 +40,8 @@ class Builder
             'domain name choosen does not appear to be valid / allowed' => BlacklistedKeywordException::class,
             'we do not support IDN domains' => IDNDomainException::class,
             '/The username \w+ appears to be allready created/' => UsernameExistsException::class,
-            '/The domain name [\w|\.]+ is allready added to a hosting account/i' => DomainExistsException::class,
-            '/The name servers for [\w\.]+ are not set to valid name servers/i' => InvalidNameserversException::class,
+            '/The domain name [\w\.-]+ is allready added to a hosting account/i' => DomainExistsException::class,
+            '/The name servers for [\w\.-]+ are not set to valid name servers/i' => InvalidNameserversException::class,
             'account is not active so can not be suspended' => AccountNotActiveException::class,
             'This account is NOT currently suspended' => AccountNotSuspendedException::class,
             'the account must be active to change the password' => \HansAdema\MofhClient\Exception\Password\AccountNotActiveException::class,
@@ -50,6 +51,7 @@ class Builder
             'Illegal charachters in domain name' => IllegalCharacterException::class,
             'The domain name choosen is not allowd' => BlacklistedKeywordException::class,
             'http:// should NOT be added to the domain name' => HttpPrefixException::class,
+            'The domain appears to belong to another reseller' => DomainFromOtherResellerException::class,
         ];
     }
 
