@@ -37,7 +37,7 @@ class Builder
             'The API username you are using appears to be invalid' => InvalidApiUsernameException::class,
             'does not match the allowed ip address' => InvalidIpAddressException::class,
             'No account mathcing this username' => UnknownUsernameException::class,
-            'this domdin name appears invalid (to long !)' => DomainTooLongException::class,
+            'domdin name appears invalid (to long !)' => DomainTooLongException::class,
             'domain name choosen does not appear to be valid / allowed' => BlacklistedKeywordException::class,
             'we do not support IDN domains' => IDNDomainException::class,
             '/The username \w+ appears to be allready created/' => UsernameExistsException::class,
