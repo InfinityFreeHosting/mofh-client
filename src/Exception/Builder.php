@@ -12,6 +12,7 @@ use HansAdema\MofhClient\Exception\Availability\TKDomainException;
 use HansAdema\MofhClient\Exception\CreateAccount\DomainExistsException;
 use HansAdema\MofhClient\Exception\CreateAccount\DomainFromOtherResellerException;
 use HansAdema\MofhClient\Exception\CreateAccount\InvalidNameserversException;
+use HansAdema\MofhClient\Exception\CreateAccount\TooManyDotsException;
 use HansAdema\MofhClient\Exception\CreateAccount\UsernameExistsException;
 use HansAdema\MofhClient\Exception\Password\PasswordIdenticalException;
 use HansAdema\MofhClient\Exception\Response\InvalidApiKeyException;
@@ -52,6 +53,7 @@ class Builder
             'The domain name choosen is not allowd' => BlacklistedKeywordException::class,
             'http:// should NOT be added to the domain name' => HttpPrefixException::class,
             'The domain appears to belong to another reseller' => DomainFromOtherResellerException::class,
+            'The domain name does not appear valid (to many dots !)' => TooManyDotsException::class,
         ];
     }
 
