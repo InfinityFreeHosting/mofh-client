@@ -15,12 +15,15 @@ use HansAdema\MofhClient\Exception\CreateAccount\InvalidNameserversException;
 use HansAdema\MofhClient\Exception\CreateAccount\TooManyDotsException;
 use HansAdema\MofhClient\Exception\CreateAccount\UsernameExistsException;
 use HansAdema\MofhClient\Exception\Password\PasswordIdenticalException;
+use HansAdema\MofhClient\Exception\Password\PasswordTooShortException;
 use HansAdema\MofhClient\Exception\Response\InvalidApiKeyException;
 use HansAdema\MofhClient\Exception\Response\InvalidApiUsernameException;
 use HansAdema\MofhClient\Exception\Response\InvalidIpAddressException;
+use HansAdema\MofhClient\Exception\Response\InvalidUsernameException;
 use HansAdema\MofhClient\Exception\Response\UnknownUsernameException;
 use HansAdema\MofhClient\Exception\Suspend\AccountNotActiveException;
 use HansAdema\MofhClient\Exception\Unsuspend\AccountNotSuspendedException;
+use HansAdema\MofhClient\Exception\Unsuspend\AdminSuspendedException;
 
 class Builder
 {
@@ -54,6 +57,10 @@ class Builder
             'http:// should NOT be added to the domain name' => HttpPrefixException::class,
             'The domain appears to belong to another reseller' => DomainFromOtherResellerException::class,
             'The domain name does not appear valid (to many dots !)' => TooManyDotsException::class,
+            'choosen password is to short' => PasswordTooShortException::class,
+            'username is invalid' => InvalidUsernameException::class,
+            'choosen password contains illegal characters' => IllegalCharacterException::class,
+            'account appears to be admin suspended' => AdminSuspendedException::class,
         ];
     }
 
