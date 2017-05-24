@@ -5,39 +5,152 @@ namespace HansAdema\MofhClient;
 use GuzzleHttp\Client as Guzzle;
 use HansAdema\MofhClient\Exception\ApiException;
 use HansAdema\MofhClient\Exception\Builder;
+use HansAdema\MofhClient\Message\AbstractRequest;
+use RuntimeException;
 
 class Client
 {
     /**
      * @var Client
      */
-    protected $client;
+    protected $httpClient;
+
+    protected $parameters;
 
     /**
-     * @var string
-     */
-    protected $apiUsername;
-
-    /**
-     * @var string
-     */
-    protected $apiPassword;
-
-    /**
-     * Create a new API client
+     * Create a new gateway instance
      *
-     * @param string $apiUsername The API username from MOFH
-     * @param string $apiPassword The API key from MOFH
-     * @param string $url The API url (defaults to main MOFH url)
+     * @param Client          $httpClient  A HTTP client to make API calls with
      */
-    public function __construct($apiUsername, $apiPassword, $url = 'https://panel.myownfreehost.net:2087/xml-api/')
+    public function __construct(Client $httpClient = null)
     {
-        $this->client = new Guzzle([
-            'base_uri' => $url,
-        ]);
+        $this->httpClient = $httpClient ?: $this->getDefaultHttpClient();
+        $this->initialize();
+    }
 
-        $this->apiUsername = $apiUsername;
-        $this->apiPassword = $apiPassword;
+    protected function getDefaultHttpClient()
+    {
+        return new \GuzzleHttp\Client();
+    }
+
+    public static function create(array $parameters = [])
+    {
+        $client = new self();
+        $client->initialize($parameters);
+        return $client;
+    }
+
+    public function getDefaultParameters()
+    {
+        return [
+            'apiUsername' => '',
+            'apiPassword' => '',
+            'apiUrl' => 'https://panel.myownfreehost.net:2087/xml-api/',
+        ];
+    }
+
+    /**
+     * Initialize this gateway with default parameters
+     *
+     * @param  array $parameters
+     * @return $this
+     */
+    public function initialize(array $parameters = array())
+    {
+        $this->parameters = $parameters;
+
+        // set default parameters
+        foreach ($this->getDefaultParameters() as $key => $value) {
+            $this->setParameter($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get a single parameter.
+     *
+     * @param string $key The parameter key
+     * @return mixed
+     */
+    protected function getParameter($key)
+    {
+        if (isset($this->parameters[$key])) {
+            return $this->parameters[$key];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Set a single parameter
+     *
+     * @param string $key The parameter key
+     * @param mixed $value The value to set
+     * @return $this
+     * @throws RuntimeException if a request parameter is modified after the request has been sent.
+     */
+    protected function setParameter($key, $value)
+    {
+        $this->parameters[$key] = $value;
+
+        return $this;
+    }
+
+    public function setApiUsername($username)
+    {
+        return $this->setParameter('apiUsername', $username);
+    }
+
+    public function getApiUsername()
+    {
+        return $this->getParameter('apiUsername');
+    }
+
+    public function setApiPassword($password)
+    {
+        return $this->setParameter('apiPassword', $password);
+    }
+
+    public function getApiPassword()
+    {
+        return $this->getParameter('apiPassword');
+    }
+
+    /**
+     * Create and initialize a request object
+     *
+     * This function is usually used to create objects of type
+     * Omnipay\Common\Message\AbstractRequest (or a non-abstract subclass of it)
+     * and initialise them with using existing parameters from this gateway.
+     *
+     * Example:
+     *
+     * <code>
+     *   class MyRequest extends \Omnipay\Common\Message\AbstractRequest {};
+     *
+     *   class MyGateway extends \Omnipay\Common\AbstractGateway {
+     *     function myRequest($parameters) {
+     *       $this->createRequest('MyRequest', $parameters);
+     *     }
+     *   }
+     *
+     *   // Create the gateway object
+     *   $gw = Omnipay::create('MyGateway');
+     *
+     *   // Create the request object
+     *   $myRequest = $gw->myRequest($someParameters);
+     * </code>
+     *
+     * @see AbstractRequest
+     * @param string $class The request class name
+     * @param array $parameters
+     * @return AbstractRequest
+     */
+    protected function createRequest($class, array $parameters)
+    {
+        $obj = new $class($this->httpClient);
+        return $obj->initialize(array_replace($this->parameters, $parameters));
     }
 
     /**
