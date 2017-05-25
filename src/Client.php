@@ -3,9 +3,12 @@
 namespace HansAdema\MofhClient;
 
 use GuzzleHttp\Client as Guzzle;
-use HansAdema\MofhClient\Exception\ApiException;
-use HansAdema\MofhClient\Exception\Builder;
 use HansAdema\MofhClient\Message\AbstractRequest;
+use HansAdema\MofhClient\Message\AvailabilityRequest;
+use HansAdema\MofhClient\Message\CreateAccountRequest;
+use HansAdema\MofhClient\Message\PasswordRequest;
+use HansAdema\MofhClient\Message\SuspendRequest;
+use HansAdema\MofhClient\Message\UnsuspendRequest;
 use RuntimeException;
 
 class Client
@@ -15,6 +18,9 @@ class Client
      */
     protected $httpClient;
 
+    /**
+     * @var array
+     */
     protected $parameters;
 
     /**
@@ -28,11 +34,20 @@ class Client
         $this->initialize();
     }
 
+    /**
+     * @return Guzzle
+     */
     protected function getDefaultHttpClient()
     {
         return new \GuzzleHttp\Client();
     }
 
+    /**
+     * Create a new client
+     *
+     * @param array $parameters See getDefaultParameters()
+     * @return Client
+     */
     public static function create(array $parameters = [])
     {
         $client = new self();
@@ -40,12 +55,18 @@ class Client
         return $client;
     }
 
+    /**
+     * Get the available parameters and their default settings
+     *
+     * @return array
+     */
     public function getDefaultParameters()
     {
         return [
             'apiUsername' => '',
             'apiPassword' => '',
             'apiUrl' => 'https://panel.myownfreehost.net:2087/xml-api/',
+            'plan' => '',
         ];
     }
 
@@ -60,7 +81,7 @@ class Client
         $this->parameters = $parameters;
 
         // set default parameters
-        foreach ($this->getDefaultParameters() as $key => $value) {
+        foreach (array_replace($this->getDefaultParameters(), $parameters) as $key => $value) {
             $this->setParameter($key, $value);
         }
 
@@ -117,30 +138,28 @@ class Client
         return $this->getParameter('apiPassword');
     }
 
+    public function setPlan($plan)
+    {
+        return $this->setParameter('plan', $plan);
+    }
+
+    public function getPlan()
+    {
+        return $this->getParameter('plan');
+    }
+
+    public function setApiUrl($url)
+    {
+        return $this->setParameter('apiUrl', $url);
+    }
+
+    public function getApiUrl()
+    {
+        return $this->getParameter('apiUrl');
+    }
+
     /**
      * Create and initialize a request object
-     *
-     * This function is usually used to create objects of type
-     * Omnipay\Common\Message\AbstractRequest (or a non-abstract subclass of it)
-     * and initialise them with using existing parameters from this gateway.
-     *
-     * Example:
-     *
-     * <code>
-     *   class MyRequest extends \Omnipay\Common\Message\AbstractRequest {};
-     *
-     *   class MyGateway extends \Omnipay\Common\AbstractGateway {
-     *     function myRequest($parameters) {
-     *       $this->createRequest('MyRequest', $parameters);
-     *     }
-     *   }
-     *
-     *   // Create the gateway object
-     *   $gw = Omnipay::create('MyGateway');
-     *
-     *   // Create the request object
-     *   $myRequest = $gw->myRequest($someParameters);
-     * </code>
      *
      * @see AbstractRequest
      * @param string $class The request class name
@@ -154,150 +173,78 @@ class Client
     }
 
     /**
-     * Send a POST query to the XML API
-     *
-     * @param string $function The MOFH API function name
-     * @param array $options The API function arguments
-     * @return array The response data
-     * @throws ApiException An exception if thrown if there was a problem with the request or an error response was detected
-     */
-    protected function query($function, array $options)
-    {
-        $response = $this->client->post($function, [
-            'form_params' => $options,
-            'auth' => [$this->apiUsername, $this->apiPassword],
-            'verify' => false,
-        ]);
-
-        $data = (string)$response->getBody();
-
-        if (strpos(trim($data), '<') !== 0) {
-            throw Builder::build($data, $data);
-        }
-
-        $array = $this->xmlToArray((array)simplexml_load_string($data));
-
-        if (isset($array['result']['status']) && $array['result']['status'] != 1) {
-            throw Builder::build($array['result']['statusmsg'], $array);
-        } else {
-            return $array;
-        }
-    }
-
-    /**
-     * Convert an array containing SimpleXMLElements to full arrays
-     *
-     * @param array $input
-     * @return array
-     */
-    private function xmlToArray($input)
-    {
-        foreach ($input as $key => $value) {
-            if ($value instanceof \SimpleXMLElement) {
-                $value = (array)$value;
-            }
-
-            if (is_array($value)) {
-                $input[$key] = $this->xmlToArray($value);
-            }
-        }
-
-        return $input;
-    }
-
-    /**
      * Create a new hosting account
      *
-     * @param string $username A custom username, max. 8 characters of letters and numbers
-     * @param string $password The account password
-     * @param string $email The email address of the owner
-     * @param string $domain The domain name of the account
-     * @param string $plan The MOFH hosting plan name
-     * @return string The login username from MOFH (like host_123456789)
-     * @throws ApiException
+     * Parameters:
+     * - username: A custom username, max. 8 characters of letters and numbers
+     * - password: The FTP/control panel/database password for the account
+     * - email: The contact e-mail address of the owner
+     * - domain: The primary domain name of the account
+     * - plan: The hosting plan to create the acccount on
+     *
+     * @param array $parameters
+     * @return AbstractRequest
      */
-    public function createAccount($username, $password, $email, $domain, $plan)
+    public function createAccount(array $parameters = array())
     {
-        return $this->query('createacct', [
-            'username' => $username,
-            'password' => $password,
-            'contactemail' => $email,
-            'domain' => $domain,
-            'plan' => $plan,
-        ])['result']['options']['vpusername'];
+        return $this->createRequest(CreateAccountRequest::class, $parameters);
     }
 
     /**
      * Suspend an account on MOFH
      *
-     * @param string $username The custom username of the account
-     * @param string $reason The reason for the suspension
-     * @throws ApiException
+     * Parameters:
+     * - username: The custom username
+     * - reason: The reason why the account was suspended
+     *
+     * @param array $parameters
+     * @return AbstractRequest
      */
-    public function suspend($username, $reason)
+    public function suspend(array $parameters = array())
     {
-        $this->query('suspendacct', [
-            'user' => $username,
-            'reason' => $reason,
-        ]);
+        return $this->createRequest(SuspendRequest::class, $parameters);
     }
 
     /**
      * Unsuspend the account with the given username at MOFH
      *
-     * @param string $username The custom username of the account
-     * @throws ApiException
+     * Parameters:
+     * - username: The custom username
+     *
+     * @param array $parameters
+     * @return AbstractRequest
      */
-    public function unsuspend($username)
+    public function unsuspend(array $parameters = array())
     {
-        $this->query('unsuspendacct', ['user' => $username]);
+        return $this->createRequest(UnsuspendRequest::class, $parameters);
     }
 
     /**
      * Change the password of an (active) account
      *
-     * @param string $username The custom username of the account
-     * @param string $password The new password
-     * @throws ApiException
+     * Parameters:
+     * - username: The custom username
+     * - password: The new password
+     *
+     * @param array $parameters
+     * @return AbstractRequest
      */
-    public function password($username, $password)
+    public function password(array $parameters = array())
     {
-        $response = $this->query('passwd', [
-            'user' => $username,
-            'pass' => $password,
-        ]);
-
-        if (isset($response['passwd']['status']) && $response['passwd']['status'] != 1) {
-            throw Builder::build($response['passwd']['statusmsg'], $response);
-        }
+        return $this->createRequest(PasswordRequest::class, $parameters);
     }
 
     /**
      * Check whether a domain is available at MOFH
      *
-     * @param string $domain The domain to check
-     * @return bool
-     * @throws ApiException
+     * Parameters:
+     * - domain: The custom username
+     *
+     * @param array $parameters
+     * @return AbstractRequest
      */
-    public function availability($domain)
+    public function availability(array $parameters = array())
     {
-        $response = $this->client->get('checkavailable', [
-            'query' => [
-                'api_user' => $this->apiUsername,
-                'api_key' => $this->apiPassword,
-                'domain' => $domain,
-            ],
-            'verify' => false,
-        ]);
-
-        $data = trim($response->getBody());
-
-        if ($data === '1') {
-            return true;
-        } elseif ($data === '0') {
-            return false;
-        } else {
-            throw Builder::build($data, $data);
-        }
+        return $this->createRequest(AvailabilityRequest::class, $parameters);
     }
 }

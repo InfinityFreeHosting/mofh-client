@@ -11,7 +11,7 @@ class SuspendRequest extends AbstractRequest
 
     public function setReason($reason)
     {
-        return $this->getParameter($reason);
+        return $this->setParameter('reason', $reason);
     }
 
     public function sendData($data)

@@ -105,6 +105,16 @@ abstract class AbstractRequest
         return $this->getParameter('username');
     }
 
+    public function setApiUrl($url)
+    {
+        return $this->setParameter('apiUrl', $url);
+    }
+
+    public function getApiUrl()
+    {
+        return $this->getParameter('apiUrl');
+    }
+
     /**
      * Validate the request.
      *
@@ -126,8 +136,6 @@ abstract class AbstractRequest
 
     /**
      * Send the request
-     *
-     * @return ResponseInterface
      */
     public function send()
     {
@@ -141,29 +149,14 @@ abstract class AbstractRequest
      * @param string $function The MOFH API function name
      * @param array $parameters The API function arguments
      * @return \Psr\Http\Message\ResponseInterface
-     * @throws ApiException An exception if thrown if there was a problem with the request or an error response was detected
      */
     protected function sendRequest($function, array $parameters)
     {
-        return $this->httpClient->post($function, [
+        return $this->httpClient->post($this->getApiUrl() . $function, [
             'form_params' => $parameters,
             'auth' => [$this->getApiUsername(), $this->getApiPassword()],
             'verify' => false,
         ]);
-
-        $data = (string)$response->getBody();
-
-        if (strpos(trim($data), '<') !== 0) {
-            throw Builder::build($data, $data);
-        }
-
-        $array = $this->xmlToArray((array)simplexml_load_string($data));
-
-        if (isset($array['result']['status']) && $array['result']['status'] != 1) {
-            throw Builder::build($array['result']['statusmsg'], $array);
-        } else {
-            return $array;
-        }
     }
 
     abstract public function sendData($data);
