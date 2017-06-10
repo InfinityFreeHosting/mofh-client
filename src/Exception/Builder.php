@@ -7,7 +7,6 @@ use HansAdema\MofhClient\Exception\Availability\DomainTooLongException;
 use HansAdema\MofhClient\Exception\Availability\DomainTooShortException;
 use HansAdema\MofhClient\Exception\Availability\HttpPrefixException;
 use HansAdema\MofhClient\Exception\Availability\IDNDomainException;
-use HansAdema\MofhClient\Exception\Availability\IllegalCharacterException;
 use HansAdema\MofhClient\Exception\Availability\TKDomainException;
 use HansAdema\MofhClient\Exception\CreateAccount\DomainExistsException;
 use HansAdema\MofhClient\Exception\CreateAccount\DomainFromOtherResellerException;
@@ -17,6 +16,7 @@ use HansAdema\MofhClient\Exception\CreateAccount\UsernameExistsException;
 use HansAdema\MofhClient\Exception\Password\PasswordIdenticalException;
 use HansAdema\MofhClient\Exception\Password\PasswordTooShortException;
 use HansAdema\MofhClient\Exception\Response\InvalidApiKeyException;
+use HansAdema\MofhClient\Exception\Response\InvalidApiKeyOrUsernameException;
 use HansAdema\MofhClient\Exception\Response\InvalidApiUsernameException;
 use HansAdema\MofhClient\Exception\Response\InvalidIpAddressException;
 use HansAdema\MofhClient\Exception\Response\InvalidUsernameException;
@@ -52,15 +52,17 @@ class Builder
             'error occured changing this password' => PasswordIdenticalException::class,
             'domain name appears invalid (to short !)' => DomainTooShortException::class,
             'Sorry we do not support hosting .tk domains on free hosting' => TKDomainException::class,
-            'Illegal charachters in domain name' => IllegalCharacterException::class,
+            'Illegal charachters in domain name' => \HansAdema\MofhClient\Exception\Availability\IllegalCharacterException::class,
             'The domain name choosen is not allowd' => BlacklistedKeywordException::class,
             'http:// should NOT be added to the domain name' => HttpPrefixException::class,
             'The domain appears to belong to another reseller' => DomainFromOtherResellerException::class,
             'The domain name does not appear valid (to many dots !)' => TooManyDotsException::class,
             'choosen password is to short' => PasswordTooShortException::class,
             'username is invalid' => InvalidUsernameException::class,
-            'choosen password contains illegal characters' => IllegalCharacterException::class,
+            'choosen password contains illegal characters' => \HansAdema\MofhClient\Exception\Password\IllegalCharacterException::class,
             'account appears to be admin suspended' => AdminSuspendedException::class,
+            'API key or API username entered is not valid' => InvalidApiKeyOrUsernameException::class,
+            'suspensions reason contains illegal characters' => \HansAdema\MofhClient\Exception\Suspend\IllegalCharacterException::class,
         ];
     }
 
