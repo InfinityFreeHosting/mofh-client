@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hans
- * Date: 25-5-17
- * Time: 20:03
- */
 
 namespace HansAdema\MofhClient\Message;
-
 
 class UnsuspendRequest extends AbstractRequest
 {

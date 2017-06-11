@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hans
- * Date: 24-5-17
- * Time: 13:15
- */
 
 namespace HansAdema\MofhClient\Message;
-
 
 abstract class AbstractResponse
 {
@@ -43,6 +36,11 @@ abstract class AbstractResponse
         $this->request = $request;
         $this->response = $response;
 
+        $this->parseResponse();
+    }
+
+    protected function parseResponse()
+    {
         $data = (string)$this->response->getBody();
 
         if (strpos(trim($data), '<') !== 0) {
@@ -55,7 +53,7 @@ abstract class AbstractResponse
     /**
      * Get the response data.
      *
-     * @return mixed
+     * @return array|null
      */
     public function getData()
     {
@@ -84,23 +82,23 @@ abstract class AbstractResponse
     }
 
     /**
-     * Response Message
+     * Get the error message from the response if the call failed.
      *
-     * @return null|string A response message from the payment gateway
+     * @return string
      */
     public function getMessage()
     {
         if ($this->getData() && isset($this->getData()['result']['statusmsg'])) {
             return trim($this->getData()['result']['statusmsg']);
         } else {
-            return (string)$this->response->getBody();
+            return (string)trim($this->response->getBody());
         }
     }
 
     /**
-     * Response code
+     * Try to map the error message from the API to an error code
      *
-     * @return null|string A response code from the payment gateway
+     * @return string|null
      */
     public function getCode()
     {
@@ -126,6 +124,7 @@ abstract class AbstractResponse
         return [
             'The API key you are using appears to be invalid' => 'invalid_api_key',
             'The API username you are using appears to be invalid' => 'invalid_api_username',
+            'The API key or API username entered is not valid' => 'invaid_api_key_username',
             'does not match the allowed ip address' => 'invalid_api_ip',
             'No account mathcing this username' => 'unknown_username',
             'choosen password is to short' => 'password_too_short',

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hans
- * Date: 25-5-17
- * Time: 20:18
- */
 
 namespace HansAdema\MofhClient\Message;
-
 
 class AvailabilityRequest extends AbstractRequest
 {

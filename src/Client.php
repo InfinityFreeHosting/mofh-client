@@ -39,7 +39,7 @@ class Client
      */
     protected function getDefaultHttpClient()
     {
-        return new \GuzzleHttp\Client();
+        return new Guzzle();
     }
 
     /**
