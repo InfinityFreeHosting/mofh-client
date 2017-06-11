@@ -22,6 +22,7 @@ use HansAdema\MofhClient\Exception\Response\InvalidIpAddressException;
 use HansAdema\MofhClient\Exception\Response\InvalidUsernameException;
 use HansAdema\MofhClient\Exception\Response\UnknownUsernameException;
 use HansAdema\MofhClient\Exception\Suspend\AccountNotActiveException;
+use HansAdema\MofhClient\Exception\Suspend\ReasonTooShortException;
 use HansAdema\MofhClient\Exception\Unsuspend\AccountNotSuspendedException;
 use HansAdema\MofhClient\Exception\Unsuspend\AdminSuspendedException;
 
@@ -63,6 +64,7 @@ class Builder
             'account appears to be admin suspended' => AdminSuspendedException::class,
             'API key or API username entered is not valid' => InvalidApiKeyOrUsernameException::class,
             'suspensions reason contains illegal characters' => \HansAdema\MofhClient\Exception\Suspend\IllegalCharacterException::class,
+            'suspension reason is to short' => ReasonTooShortException::class,
         ];
     }
 
