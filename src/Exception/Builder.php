@@ -54,6 +54,7 @@ class Builder
             'domain name appears invalid (to short !)' => DomainTooShortException::class,
             'Sorry we do not support hosting .tk domains on free hosting' => TKDomainException::class,
             'Illegal charachters in domain name' => \HansAdema\MofhClient\Exception\Availability\IllegalCharacterException::class,
+            'domain name does not appear valid' => BlacklistedKeywordException::class,
             'The domain name choosen is not allowd' => BlacklistedKeywordException::class,
             'http:// should NOT be added to the domain name' => HttpPrefixException::class,
             'The domain appears to belong to another reseller' => DomainFromOtherResellerException::class,
