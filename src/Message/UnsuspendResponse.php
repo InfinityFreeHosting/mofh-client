@@ -6,6 +6,9 @@ class UnsuspendResponse extends AbstractResponse
 {
     protected $status;
 
+    /**
+     * Parse the additional parameters present in the response string.
+     */
     protected function parseResponse()
     {
         parent::parseResponse();
@@ -23,16 +26,18 @@ class UnsuspendResponse extends AbstractResponse
         }
     }
 
+    /**
+     * Get the status of the account if it's not suspended.
+     *
+     * Is one of the following chars:
+     * - a: active
+     * - r: reactivating
+     * - c: closing
+     *
+     * @return string|null
+     */
     public function getStatus()
     {
         return $this->status;
-    }
-
-    protected function getMessageRules()
-    {
-        return array_merge(parent::getMessageRules(), [
-            'This account is NOT currently suspended' => 'not_suspended',
-            'account appears to be admin suspended' => 'admin_suspended',
-        ]);
     }
 }

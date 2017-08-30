@@ -46,27 +46,10 @@ class PasswordResponse extends AbstractResponse
         if ($this->getData() && isset($this->getData()['passwd']['status']) && $this->getData()['passwd']['status'] == 1) {
             return true; // The password call was successful
         } elseif (strpos($this->getMessage(), 'error occured changing this password') !== false) {
-            return true; // The password is identical (which is technically identical to be being equal)
+            return true; // The password is identical (which is technically identical to be being changed successfully)
         } else {
             return false;
         }
-    }
-
-    public function getCode()
-    {
-        if (!$this->isSuccessful() && $this->getMessage() == '') {
-            return 'account_deleted';
-        }
-
-        return parent::getCode();
-    }
-
-    protected function getMessageRules()
-    {
-        return array_merge(parent::getMessageRules(), [
-            'the account must be active to change the password' => 'not_active',
-            'error occured changing this password' => 'password_identical',
-        ]);
     }
 
     /**

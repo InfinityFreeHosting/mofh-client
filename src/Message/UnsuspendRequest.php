@@ -16,10 +16,7 @@ class UnsuspendRequest extends AbstractRequest
 
     public function sendData($data)
     {
-        $httpResponse = $this->httpClient->get($this->getApiUrl() . 'checkavailable', [
-            'query' => $data,
-            'verify' => false,
-        ]);
+        $httpResponse = $this->sendRequest('unsuspendacct', $data);
 
         return $this->response = new UnsuspendResponse($this, $httpResponse);
     }

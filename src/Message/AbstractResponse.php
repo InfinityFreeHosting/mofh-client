@@ -39,6 +39,9 @@ abstract class AbstractResponse
         $this->parseResponse();
     }
 
+    /**
+     * Parse the response after it has been received.
+     */
     protected function parseResponse()
     {
         $data = (string)$this->response->getBody();
@@ -93,52 +96,6 @@ abstract class AbstractResponse
         } else {
             return (string)trim($this->response->getBody());
         }
-    }
-
-    /**
-     * Try to map the error message from the API to an error code
-     *
-     * @return string|null
-     */
-    public function getCode()
-    {
-        $message = $this->getMessage();
-
-        foreach ($this->getMessageRules() as $rule => $code) {
-            if (substr($rule, 0, 1) == '/') {
-                if (preg_match($rule, $message)) {
-                    return $code;
-                }
-            } else {
-                if (strpos($message, $rule) !== false) {
-                    return $code;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    protected function getMessageRules()
-    {
-        return [
-            'The API key you are using appears to be invalid' => 'invalid_api_key',
-            'The API username you are using appears to be invalid' => 'invalid_api_username',
-            'The API key or API username entered is not valid' => 'invaid_api_key_username',
-            'does not match the allowed ip address' => 'invalid_api_ip',
-            'No account mathcing this username' => 'unknown_username',
-            'choosen password is to short' => 'password_too_short',
-            'username is invalid' => 'invalid_username',
-            'choosen password contains illegal characters' => 'password_invalid_characters',
-            'domdin name appears invalid (to long !)' => 'domain_too_long',
-            'domain name appears invalid (to short !)' => 'domain_too_short',
-            'domain name choosen does not appear to be valid / allowed' => 'domain_blacklisted_keyword',
-            'The domain name choosen is not allowd' => 'domain_blacklisted_keyword',
-            'we do not support IDN domains' => 'idn_domain',
-            'Sorry we do not support hosting .tk domains on free hosting' => 'tk_domain',
-            'http:// should NOT be added to the domain name' => 'domain_http_prefix',
-            'Illegal charachters in domain name' => 'domain_invalid_characters',
-        ];
     }
 
     /**

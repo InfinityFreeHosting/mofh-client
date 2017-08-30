@@ -6,6 +6,9 @@ class SuspendResponse extends AbstractResponse
 {
     protected $info;
 
+    /**
+     * Parse the additional parameters present in the response string.
+     */
     protected function parseResponse()
     {
         parent::parseResponse();
@@ -25,27 +28,38 @@ class SuspendResponse extends AbstractResponse
         }
     }
 
+    /**
+     * Get the status of the account if it's not active.
+     *
+     * Is one of the following chars:
+     * - x: suspended
+     * - r: reactivating
+     * - c: closing
+     *
+     * @return string|null
+     */
     public function getStatus()
     {
         return isset($this->info['status']) ? $this->info['status'] : null;
     }
 
+    /**
+     * Get the username of the account if it's not active.
+     *
+     * @return string|null
+     */
     public function getVpUsername()
     {
         return isset($this->info['vpUser']) ? $this->info['vpUser'] : null;
     }
 
+    /**
+     * Get the suspension reason of the account if it's not active.
+     *
+     * @return string|null
+     */
     public function getReason()
     {
         return isset($this->info['reason']) ? $this->info['reason'] : null;
-    }
-
-    protected function getMessageRules()
-    {
-        return array_merge(parent::getMessageRules(), [
-            'account is not active so can not be suspended' => 'not_active',
-            'suspension reason is to short' => 'reason_too_short',
-            'suspensions reason contains illegal characters' => 'reason_illegal_characters',
-        ]);
     }
 }

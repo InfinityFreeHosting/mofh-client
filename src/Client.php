@@ -26,9 +26,9 @@ class Client
     /**
      * Create a new gateway instance
      *
-     * @param Client          $httpClient  A HTTP client to make API calls with
+     * @param Guzzle $httpClient A HTTP client to make API calls with
      */
-    public function __construct(Client $httpClient = null)
+    public function __construct(Guzzle $httpClient = null)
     {
         $this->httpClient = $httpClient ?: $this->getDefaultHttpClient();
         $this->initialize();

@@ -17,15 +17,4 @@ class CreateAccountResponse extends AbstractResponse
             return null;
         }
     }
-
-    protected function getMessageRules()
-    {
-        return array_merge(parent::getMessageRules(), [
-            '/The username \w+ appears to be allready created/' => 'username_exists',
-            '/The domain name [\w\.-]+ is allready added to a hosting account/i' => 'domain_exists',
-            '/The name servers for [\w\.-]+ are not set to valid name servers/i' => 'invalid_nameservers',
-            'The domain appears to belong to another reseller' => 'domain_other_reseller',
-            'The domain name does not appear valid (to many dots !)' => 'domain_too_many_dots',
-        ]);
-    }
 }
