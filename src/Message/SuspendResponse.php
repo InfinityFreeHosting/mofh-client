@@ -31,7 +31,7 @@ class SuspendResponse extends AbstractResponse
     /**
      * Get the status of the account if it's not active.
      *
-     * Is one of the following chars:
+     * The result is one of the following chars:
      * - x: suspended
      * - r: reactivating
      * - c: closing
@@ -50,7 +50,7 @@ class SuspendResponse extends AbstractResponse
      */
     public function getVpUsername()
     {
-        return isset($this->info['vpUser']) ? $this->info['vpUser'] : null;
+        return isset($this->info['vPuser']) ? $this->info['vPuser'] : null;
     }
 
     /**

@@ -34,7 +34,7 @@ class AvailabilityRequest extends AbstractRequest
 
     protected function sendRequest($function, array $parameters)
     {
-        return $this->httpClient->post($this->getApiUrl() . $function, [
+        return $this->httpClient->get($this->getApiUrl() . $function, [
             'query' => $parameters,
             'verify' => false,
         ]);

@@ -1,0 +1,9 @@
+language: php
+php:
+  - '5.6'
+  - '7.0.22' # Manually pin to a higher version because default Travis is 7.0.7 which is too low.
+  - '7.1'
+
+install: composer install
+script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+after_success: travis_retry php vendor/bin/test-reporter

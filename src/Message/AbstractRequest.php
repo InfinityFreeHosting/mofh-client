@@ -129,13 +129,15 @@ abstract class AbstractRequest
         foreach (func_get_args() as $key) {
             $value = $this->getParameter($key);
             if (! isset($value)) {
-                throw new InvalidRequestException("The $key parameter is required");
+                throw new InvalidRequestException("The {$key} parameter is required");
             }
         }
     }
 
     /**
-     * Send the request
+     * Send the request.
+     *
+     * @return AbstractResponse
      */
     public function send()
     {

@@ -238,7 +238,7 @@ class Client
      * Check whether a domain is available at MOFH
      *
      * Parameters:
-     * - domain: The custom username
+     * - domain: The domain name or subdomain to check
      *
      * @param array $parameters
      * @return AbstractRequest

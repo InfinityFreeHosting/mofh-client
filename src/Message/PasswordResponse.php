@@ -11,13 +11,9 @@ class PasswordResponse extends AbstractResponse
         parent::parseResponse();
 
         if (!$this->isSuccessful()) {
-            if ($this->getMessage() == '') {
-                $this->status = 'd';
-            } else {
-                $matches = [];
-                if (preg_match('/the account must be active to change the password\s+\((.+)\)/', $this->getMessage(), $matches)) {
-                    $this->status = $matches[1];
-                }
+            $matches = [];
+            if (preg_match('/the account must be active to change the password\s+\((.+)\)/', $this->getMessage(), $matches)) {
+                $this->status = $matches[1];
             }
         }
     }
@@ -53,7 +49,12 @@ class PasswordResponse extends AbstractResponse
     }
 
     /**
-     * Get the status of the account which
+     * Get the status of the account if the account is not active.
+     *
+     * The result is one of the following chars:
+     * - x: suspended
+     * - r: reactivating
+     * - c: closing
      *
      * @return string
      */
