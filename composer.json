@@ -18,8 +18,7 @@
     "fzaninotto/faker": "1.7",
     "phpspec/prophecy": "1.6.*",
     "phpdocumentor/reflection-docblock": "3.2.2",
-    "phpunit/php-token-stream": "^1.4.2",
-    "codeclimate/php-test-reporter": "dev-master"
+    "phpunit/php-token-stream": "^1.4.2"
   },
   "autoload": {
     "psr-4": {

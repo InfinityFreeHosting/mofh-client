@@ -15,6 +15,11 @@ class AvailabilityResponse extends AbstractResponse
         return $this->getData();
     }
 
+    /**
+     * Whether the domain name is available for registration.
+     *
+     * @return bool
+     */
     public function isSuccessful()
     {
         return $this->data === '1';
