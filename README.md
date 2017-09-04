@@ -11,27 +11,55 @@ composer require hansadema/mofh-client
 ## Usage
 Before you can get started, you need to get the API credentials from MyOwnFreeHost. Login to the [reseller panel](http://panel.myownfreehost.net), go to API -> Setup WHM API -> select the domain you want to configure. Copy the API Username and API password and set your own IP address as the Allowed IP Address (the IP address of your computer, server, or wherever you want to use this API client).
 
-In your code, create the API client instance:
+The MyOwnFreeHost API exposes the following methods. The available parameters are listed below.
+- createAccount
+    - username: A unique, 8 character identifier of the account.
+    - password: A password to login to the control panel, FTP and databases.
+    - domain: A domain name to create the account. Can be a subdomain or a custom domain.
+    - email: The email address of the user.
+    - plan: The name of the hosting plan to create the account on. Requires a hosting package to be configured through MyOwnFreeHost.
+- suspend
+    - username: The unique, 8 character identifier of the account.
+    - reason: A string with information about why you are suspending the account.
+- unsuspend
+    - username: The unique, 8 character identifier of the account.
+- password
+    - username: The unique, 8 character identifier of the account.
+    - password: The new password to set for the account.
+- availability
+    - domain: The domain name or subdomain to check.
+
+### Example
 
 ```php
-$client = new \HansAdema\MofhClient\Client('myApiUsername', 'myApiPassword');
+use \HansAdema\MofhClient\Client;
+
+// Create a new API client with your API credentials.
+$client = Client::create([
+    'apiUsername' => 'your_api_username',
+    'apiPassword' => 'your_api_password',
+    'plan' => 'my_plan', // Optional, you can define it here or define it with the createAccount call.
+]);
+
+// Create a request object to create the request.
+$request = $client->createAccount([
+    'username' => 'abcdefgh', // A unique, 8 character identifier of the account.
+    'password' => 'password123', // A password to login to the control panel, FTP and databases.
+    'domain' => 'userdomain.example.com', // Can be a subdomain or a custom domain.
+    'email' => 'user@example.com', // The email address of the user.
+    'plan' => 'my_plan', // Optional, you can submit a hosting plan here or with the Client instantiation.
+]);
+
+// Send the API request and keep the response.
+$response = $request->send();
+
+// Check whether the request was successful.
+if ($response->isSuccessful()) {
+   echo 'You can login as: ' . $response->getVpUsername();
+} else {
+   echo 'Failed to create account: ' . $response->getMessage();
+}
 ```
-
-From this API client, you can use the following functions:
-
-- `createAccount($username, $password, $email, $domain, $plan)`
-- `suspend($username, $reason)`
-- `unsuspend($username)`
-- `password($username, $password)`
-- `availability($domain)`
-
-These are the only functions which are supported by MyOwnFreeHost at this time. For details on the parameters and responses, please see the documentation in the class itself.
-
-A number of different exception types have been added to determine the type of error returned by MyOwnFreeHost.
-
-## Todo
-- Add more exception types (I probably missed some)
-- Add unit tests
 
 ## License
 
