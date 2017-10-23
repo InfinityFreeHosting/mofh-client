@@ -1,6 +1,8 @@
 # MyOwnFreeHost API Client
 An API client to use the free hosting system from [MyOwnFreeHost](http://myownfreehost.net).
 
+**IMPORTANT: THIS LIBRARY IS AIMED AT EXPERIENCED PHP DEVELOPERS. Experience with object-oriented PHP and Composer is required. If you can't use oo-PHP and Composer, don't bother with this library.**
+
 ## Installation
 
 This package is best installed through Composer:
