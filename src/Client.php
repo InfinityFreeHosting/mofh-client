@@ -6,6 +6,7 @@ use GuzzleHttp\Client as Guzzle;
 use HansAdema\MofhClient\Message\AbstractRequest;
 use HansAdema\MofhClient\Message\AvailabilityRequest;
 use HansAdema\MofhClient\Message\CreateAccountRequest;
+use HansAdema\MofhClient\Message\GetUserDomainsRequest;
 use HansAdema\MofhClient\Message\PasswordRequest;
 use HansAdema\MofhClient\Message\SuspendRequest;
 use HansAdema\MofhClient\Message\UnsuspendRequest;
@@ -246,5 +247,19 @@ class Client
     public function availability(array $parameters = array())
     {
         return $this->createRequest(AvailabilityRequest::class, $parameters);
+    }
+
+    /**
+     * Get the domains belonging to an account.
+     *
+     * Parameters:
+     * - username
+     *
+     * @param array $parameters
+     * @return AbstractRequest
+     */
+    public function getUserDomains(array $parameters = array())
+    {
+        return $this->createRequest(GetUserDomainsRequest::class, $parameters);
     }
 }

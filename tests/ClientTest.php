@@ -7,6 +7,7 @@ use Faker\Generator;
 use HansAdema\MofhClient\Client;
 use HansAdema\MofhClient\Message\AvailabilityRequest;
 use HansAdema\MofhClient\Message\CreateAccountRequest;
+use HansAdema\MofhClient\Message\GetUserDomainsRequest;
 use HansAdema\MofhClient\Message\PasswordRequest;
 use HansAdema\MofhClient\Message\SuspendRequest;
 use HansAdema\MofhClient\Message\UnsuspendRequest;
@@ -163,5 +164,14 @@ class ClientTest extends TestCase
         $method->setAccessible(true);
 
         $this->assertNull($method->invoke($this->client, 'iDontExist'));
+    }
+
+    public function testGetUserDomains()
+    {
+        $username = $this->faker->userName;
+
+        $request = $this->client->getUserDomains(['username' => $username]);
+        $this->assertInstanceOf(GetUserDomainsRequest::class, $request);
+        $this->assertEquals($username, $request->getUsername());
     }
 }
