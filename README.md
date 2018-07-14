@@ -1,8 +1,6 @@
 # MyOwnFreeHost API Client
 An API client to use the free hosting system from [MyOwnFreeHost](http://myownfreehost.net).
 
-**IMPORTANT: THIS LIBRARY IS AIMED AT EXPERIENCED PHP DEVELOPERS. Experience with object-oriented PHP and Composer is required. If you can't use oo-PHP and Composer, don't bother with this library.**
-
 ## Installation
 
 This package is best installed through Composer:
@@ -36,36 +34,123 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
 ```php
 use \HansAdema\MofhClient\Client;
 
-// Create a new API client with your API credentials.
-$client = Client::create([
-    'apiUsername' => 'your_api_username',
-    'apiPassword' => 'your_api_password',
-    'plan' => 'my_plan', // Optional, you can define it here or define it with the createAccount call.
-]);
+### Check the availability or a domain name
 
-// Create a request object to create the request.
-$request = $client->createAccount([
-    'username' => 'abcdefgh', // A unique, 8 character identifier of the account.
-    'password' => 'password123', // A password to login to the control panel, FTP and databases.
-    'domain' => 'userdomain.example.com', // Can be a subdomain or a custom domain.
-    'email' => 'user@example.com', // The email address of the user.
-    'plan' => 'my_plan', // Optional, you can submit a hosting plan here or with the Client instantiation.
-]);
+You can use the `checkavailable` function to check whether a domain name or subdomain can be added to an account.
 
-// Send the API request and keep the response.
-$response = $request->send();
+```php
+$client = new \HansAdema\MofhClient\Client('myApiUsername', 'myApiPassword');
 
-// Check whether the request was successful.
-if ($response->isSuccessful()) {
-   echo 'You can login as: ' . $response->getVpUsername();
+try {
+    $result = $client->checkavailable('example.com');
+    
+    $error = 'The domain name is already in use.';
+} catch (\HansAdema\MofhClient\Exception $e) {
+    $result = false;
+    
+    $error = $e->getMessage();
+}
+
+if ($result) {
+    echo "The domain name is available!";
 } else {
-   echo 'Failed to create account: ' . $response->getMessage();
+    echo "The domain name cannot be registered: ".$error;
+}
+```
+
+### Create a hosting account
+
+```php
+$client = new \HansAdema\MofhClient\Client('myApiUsername', 'myApiPassword');
+
+// A unique, 8 character username to identify the account.
+$username = 'test1234'; 
+
+// The password for the hosting account's control panel, FTP account and MySQL Databases.
+$password = 'password';
+
+// The email address of the user creating the account.
+$email = 'example@gmail.com';
+
+// The first domain name to add to the account (subdomain or custom domain).
+$domain = 'example.com';
+
+// The hosting plan of the account. Go to https://panel.myownfreehost.net -> Quotas & Packages -> Set Packages to create a hosting plan. 
+$plan = 'myplan';
+
+try {
+    $vpUsername = $client->createacct($username, $password, $email, $domain, $plan);
+    
+    echo "Your account is now being created! Your control panel and FTP username is: ".$vpUsername;
+} catch (\HansAdema\MofhClient\Exception $e) {
+    echo "Your account could not be created: ".$e->getMessage();
+}
+```
+
+### Change the password of a hosting account
+
+The `passwd` call can be used to update the password of a hosting account. This will update the control panel password, FTP password and MySQL password.
+
+```php
+$client = new \HansAdema\MofhClient\Client('myApiUsername', 'myApiPassword');
+
+// The unique, 8 character username to identify the account.
+$username = 'test1234';
+
+$newPassword = 'password123';
+
+try {
+    $client->passwd($username, $newPassword);
+    
+    echo 'Your password was updated successfully.';
+} catch (\HansAdema\MofhClient\Exception $e) {
+     echo 'Your passwor could not be saved: '.$e->getMessage();
+}
+```
+
+### Suspend a hosting account
+
+You can use the `suspendacct` call to suspend a hosting account. A suspended account cannot serve websites and cannot access files or databases.
+
+```php
+$client = new \HansAdema\MofhClient\Client('myApiUsername', 'myApiPassword');
+
+// The unique, 8 character username to identify the account.
+$username = 'test1234';
+
+$reason = 'This person is a baddie!';
+
+try {
+    $client->suspendacct($username, $reason);
+    
+    echo 'The account is now being suspended!';
+} catch (\HansAdema\MofhClient\Exception $e) {
+    echo 'The account could not be suspended: '.$e->getMessage();
+}
+```
+
+### Unsuspend a hosting account
+
+To revert an account suspension, you can use the `unsuspendacct` call. Note that you can only unsuspend accounts you suspended yourself. Accounts which were suspended by iFastNet can only be reactivated by iFastNet.
+
+```php
+$client = new \HansAdema\MofhClient\Client('myApiUsername', 'myApiPassword');
+
+// The unique, 8 character username to identify the account.
+$username = 'test1234';
+
+try {
+    $client->unsuspendacct($username);
+    
+    echo 'The account is now being reactivated!';
+} catch (\HansAdema\MofhClient\Exception $e) {
+    echo 'The account could not be reactivated: '.$e->getMessage();
 }
 ```
 
 ## License
 
-Copyright 2017 Hans Adema
+Copyright 2019 Hans Adema
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
