@@ -393,4 +393,49 @@ class ClientTest extends TestCase
             $this->assertEquals('ERROR :The API username you are using appears to be invalid 1. .  The API key you are using appears to be invalid 1.  .', $e->getMessage());
         }
     }
+
+    public function testGetuserdomains()
+    {
+        $username = $this->faker->word . '_' . $this->faker->randomNumber;
+        $domain1 = $this->faker->domainName;
+        $domain2 = $this->faker->domainName;
+
+        $response = [
+            ["ACTIVE", $domain1],
+            ["SUSPENDED", $domain2],
+        ];
+
+        $this->mockHandler->append(new Response(200, [], json_encode($response)));
+
+        $this->assertEquals($response, $this->client->getuserdomains($username));
+
+        $this->assertEquals(1, count($this->httpHistory));
+        $request = $this->httpHistory[0]['request'];
+
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('getuserdomains', $request->getUri()->getPath());
+
+        $body = [];
+        parse_str($request->getUri()->getQuery(), $body);
+        $this->assertEquals(['api_user', 'api_key', 'username'], array_keys($body));
+        $this->assertEquals($username, $body['username']);
+    }
+
+    public function testGetuserdomainsEmpty()
+    {
+        $username = $this->faker->word . '_' . $this->faker->randomNumber;
+
+        $this->mockHandler->append(new Response(200, [], json_encode([])));
+
+        $this->assertEquals([], $this->client->getuserdomains($username));
+    }
+
+    public function testGetuserdomainsNull()
+    {
+        $username = $this->faker->word . '_' . $this->faker->randomNumber;
+
+        $this->mockHandler->append(new Response(200, [], "null"));
+
+        $this->assertEquals([], $this->client->getuserdomains($username));
+    }
 }
