@@ -4,6 +4,7 @@ php:
   - '7.0' # Manually pin to a higher version because default Travis is 7.0.7 which is too low.
   - '7.1'
   - '7.2'
+  - '7.3'
 
 install: composer update
 script: vendor/bin/phpunit --coverage-text
