@@ -10,8 +10,9 @@
     }
   ],
   "require": {
-    "guzzlehttp/guzzle": "~6.0",
-    "ext-simplexml": "*"
+    "ext-json": "*",
+    "ext-simplexml": "*",
+    "guzzlehttp/guzzle": "~6.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.7",

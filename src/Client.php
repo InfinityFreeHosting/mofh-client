@@ -42,17 +42,17 @@ class Client
     }
 
     /**
-     * Send a POST query to the XML API
+     * Send a POST query to the WHM API
      *
-     * @param string $function The MOFH API function name
-     * @param array $options The API function arguments
+     * @param string $function The WHM API function name
+     * @param array $params The API function parameters
      * @return array The response data
      * @throws Exception An exception if thrown if there was a problem with the request or an error response was detected
      */
-    protected function whmPost($function, array $options)
+    protected function whmPost($function, array $params)
     {
         $response = $this->httpClient->post($function, [
-            'form_params' => $options,
+            'form_params' => $params,
             'auth' => [$this->apiUsername, $this->apiPassword],
         ]);
 
@@ -98,6 +98,25 @@ class Client
         }
 
         return $input;
+    }
+
+    /**
+     * Send a GET request to the WHM API.
+     *
+     * @param string $function The WHM API function name.
+     * @param array $params The arguments passed to the function.
+     * @return string The response body
+     */
+    protected function whmGet($function, array $params)
+    {
+        $response = $this->httpClient->get($function, [
+            'query' => array_replace([
+                'api_user' => $this->apiUsername,
+                'api_key' => $this->apiPassword,
+            ], $params),
+        ]);
+
+        return trim($response->getBody());
     }
 
     /**
@@ -170,7 +189,7 @@ class Client
     }
 
     /**
-     * Check whether a domain is available at MOFH.
+     * Check whether a domain is available for use on an account.
      *
      * @param string $domain The domain name or subdomain to check.
      * @return bool Whether the domain name is available or not.
@@ -178,15 +197,7 @@ class Client
      */
     public function checkavailable($domain)
     {
-        $response = $this->httpClient->get('checkavailable', [
-            'query' => [
-                'api_user' => $this->apiUsername,
-                'api_key' => $this->apiPassword,
-                'domain' => $domain,
-            ],
-        ]);
-
-        $data = trim($response->getBody());
+        $data = $this->whmGet('checkavailable', ['domain' => $domain]);
 
         if ($data === '1') {
             return true;
@@ -194,6 +205,34 @@ class Client
             return false;
         } else {
             throw new Exception($data);
+        }
+    }
+
+    /**
+     * Get the domain names and their states from a specific account.
+     *
+     * This function returns an list of tuples of the specific domains.
+     * For every domain, an array is returned with the following meaning:
+     * - The first element is the status of the domain, this is typically ACTIVE or SUSPENDED.
+     * - The second element is the domain name actually assigned to the account.
+     *
+     * @param string $username The VP username of the account to check (e.g. test_12345678).
+     * @return array
+     */
+    public function getuserdomains($username)
+    {
+        $output = $this->whmGet('getuserdomains', ['username' => $username]);
+
+        if ($output == 'null') {
+            return [];
+        }
+
+        $data = json_decode($output, true);
+
+        if ($data === null) {
+            return [];
+        } else {
+            return $data;
         }
     }
 }
