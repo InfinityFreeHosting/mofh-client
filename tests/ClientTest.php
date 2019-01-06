@@ -438,4 +438,16 @@ class ClientTest extends TestCase
 
         $this->assertEquals([], $this->client->getuserdomains($username));
     }
+
+    public function testGetuserdomainsError()
+    {
+        $username = $this->faker->word . '_' . $this->faker->randomNumber;
+
+        $this->mockHandler->append(new Response(200, [],
+            "ERROR :The API username you are using appears to be invalid 1. ."));
+
+        $this->expectException(Exception::class);
+
+        $this->client->getuserdomains($username);
+    }
 }

@@ -218,6 +218,7 @@ class Client
      *
      * @param string $username The VP username of the account to check (e.g. test_12345678).
      * @return array
+     * @throws Exception
      */
     public function getuserdomains($username)
     {
@@ -230,7 +231,7 @@ class Client
         $data = json_decode($output, true);
 
         if ($data === null) {
-            return [];
+            throw new Exception($output);
         } else {
             return $data;
         }
