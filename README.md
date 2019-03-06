@@ -30,6 +30,8 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
     - password: The new password to set for the account.
 - availability
     - domain: The domain name or subdomain to check.
+- getUserDomains
+    - username: The unique, 8 character identifier of the account.
 
 ### Example
 
