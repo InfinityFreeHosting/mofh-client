@@ -31,7 +31,7 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
 - availability
     - domain: The domain name or subdomain to check.
 - getUserDomains
-    - username: The unique, 8 character identifier of the account.
+    - username: The vistaPanel login username (e.g. abcd_12345678).
 
 ### Example
 
