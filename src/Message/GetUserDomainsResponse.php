@@ -59,8 +59,7 @@ class GetUserDomainsResponse extends AbstractResponse
         if ($this->isSuccessful()) {
             $data = json_decode($this->getData(), true);
             
-            if($data == null){
-                //throw new \RuntimeException('Failed to decode JSON data: ' . $this->getData());
+            if ($data == null) {
                 return null;
             }
 
