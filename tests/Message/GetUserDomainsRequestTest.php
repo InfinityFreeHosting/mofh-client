@@ -25,6 +25,17 @@ class GetUserDomainsRequestTest extends RequestTestCase
         $this->request->initialize($this->requestData);
     }
 
+    public function testNullServerResponse(){
+        // Ensure $response->getStatus() returned `null` if the server responded with "null"
+        $this->mockHandler->append(new Response(200, [], 'null'));
+
+        $response = $this->request->send();
+        $this->assertInstanceOf(GetUserDomainsResponse::class, $response);
+        $this->assertEquals(null, $response->getStatus());
+
+        $this->assertValidGetCall('getuserdomains');
+    }
+
     public function testGetData()
     {
         $data = $this->request->getData();
