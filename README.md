@@ -67,7 +67,7 @@ if ($response->isSuccessful()) {
 
 ## License
 
-Copyright 2017 Hans Adema
+Copyright 2019 Hans Adema
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
