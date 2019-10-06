@@ -2,6 +2,9 @@
 
 namespace HansAdema\MofhClient\Message;
 
+/**
+ * @method CreateAccountRequest send() Send the request.
+ */
 class CreateAccountRequest extends AbstractRequest
 {
     public function getPassword()
