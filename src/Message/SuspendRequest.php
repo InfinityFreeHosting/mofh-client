@@ -2,6 +2,9 @@
 
 namespace HansAdema\MofhClient\Message;
 
+/**
+ * @method SuspendResponse send() Send the request.
+ */
 class SuspendRequest extends AbstractRequest
 {
     public function getReason()

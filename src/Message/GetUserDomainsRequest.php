@@ -2,6 +2,9 @@
 
 namespace HansAdema\MofhClient\Message;
 
+/**
+ * @method GetUserDomainsResponse send() Send the request.
+ */
 class GetUserDomainsRequest extends AbstractRequest
 {
     public function sendData($data)

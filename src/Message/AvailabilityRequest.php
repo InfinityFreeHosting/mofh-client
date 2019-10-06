@@ -2,6 +2,9 @@
 
 namespace HansAdema\MofhClient\Message;
 
+/**
+ * @method AvailablityResponse send() Send the request.
+ */
 class AvailabilityRequest extends AbstractRequest
 {
     public function getDomain()

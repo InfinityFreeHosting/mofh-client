@@ -2,6 +2,9 @@
 
 namespace HansAdema\MofhClient\Message;
 
+/**
+ * @method UnsuspendResponse send() Send the request.
+ */
 class UnsuspendRequest extends AbstractRequest
 {
     public function getDomain()
