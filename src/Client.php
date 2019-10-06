@@ -184,7 +184,7 @@ class Client
      * - plan: The hosting plan to create the acccount on
      *
      * @param array $parameters
-     * @return AbstractRequest
+     * @return CreateAccountRequest
      */
     public function createAccount(array $parameters = array())
     {
@@ -199,7 +199,7 @@ class Client
      * - reason: The reason why the account was suspended
      *
      * @param array $parameters
-     * @return AbstractRequest
+     * @return SuspendRequest
      */
     public function suspend(array $parameters = array())
     {
@@ -213,7 +213,7 @@ class Client
      * - username: The custom username
      *
      * @param array $parameters
-     * @return AbstractRequest
+     * @return UnsuspendRequest
      */
     public function unsuspend(array $parameters = array())
     {
@@ -228,7 +228,7 @@ class Client
      * - password: The new password
      *
      * @param array $parameters
-     * @return AbstractRequest
+     * @return PasswordRequest
      */
     public function password(array $parameters = array())
     {
@@ -242,7 +242,7 @@ class Client
      * - domain: The domain name or subdomain to check
      *
      * @param array $parameters
-     * @return AbstractRequest
+     * @return AvailabilityRequest
      */
     public function availability(array $parameters = array())
     {
@@ -256,7 +256,7 @@ class Client
      * - username
      *
      * @param array $parameters
-     * @return AbstractRequest
+     * @return GetUserDomainsRequest
      */
     public function getUserDomains(array $parameters = array())
     {

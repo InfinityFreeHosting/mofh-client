@@ -2,6 +2,9 @@
 
 namespace HansAdema\MofhClient\Message;
 
+/**
+ * @method PasswordResponse send() Send the request.
+ */
 class PasswordRequest extends AbstractRequest
 {
     public function getPassword()
