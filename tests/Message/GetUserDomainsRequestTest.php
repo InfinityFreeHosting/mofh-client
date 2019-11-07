@@ -3,9 +3,9 @@
 namespace Tests\Unit\MofhClient\Message;
 
 use GuzzleHttp\Psr7\Response;
-use HansAdema\MofhClient\Message\GetUserDomainsRequest;
-use HansAdema\MofhClient\Message\GetUserDomainsResponse;
-use HansAdema\MofhClient\Tests\Message\RequestTestCase;
+use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
+use InfinityFree\MofhClient\Message\GetUserDomainsResponse;
+use InfinityFree\MofhClient\Tests\Message\RequestTestCase;
 
 class GetUserDomainsRequestTest extends RequestTestCase
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use Faker\Factory;
 use Faker\Generator;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Psr7\Response;
-use HansAdema\MofhClient\Message\AbstractRequest;
-use HansAdema\MofhClient\Message\AbstractResponse;
+use InfinityFree\MofhClient\Message\AbstractRequest;
+use InfinityFree\MofhClient\Message\AbstractResponse;
 use PHPUnit\Framework\TestCase;
 
 class AbstractRequestTest extends TestCase

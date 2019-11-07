@@ -1,16 +1,16 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests;
+namespace InfinityFree\MofhClient\Tests;
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
-use HansAdema\MofhClient\Client;
-use HansAdema\MofhClient\Message\AvailabilityRequest;
-use HansAdema\MofhClient\Message\CreateAccountRequest;
-use HansAdema\MofhClient\Message\GetUserDomainsRequest;
-use HansAdema\MofhClient\Message\PasswordRequest;
-use HansAdema\MofhClient\Message\SuspendRequest;
-use HansAdema\MofhClient\Message\UnsuspendRequest;
+use InfinityFree\MofhClient\Client;
+use InfinityFree\MofhClient\Message\AvailabilityRequest;
+use InfinityFree\MofhClient\Message\CreateAccountRequest;
+use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
+use InfinityFree\MofhClient\Message\PasswordRequest;
+use InfinityFree\MofhClient\Message\SuspendRequest;
+use InfinityFree\MofhClient\Message\UnsuspendRequest;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase

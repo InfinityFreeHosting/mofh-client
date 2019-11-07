@@ -1,6 +1,6 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
@@ -8,8 +8,8 @@ use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use HansAdema\MofhClient\Client;
-use HansAdema\MofhClient\Message\AbstractRequest;
+use InfinityFree\MofhClient\Client;
+use InfinityFree\MofhClient\Message\AbstractRequest;
 use PHPUnit\Framework\TestCase;
 
 class RequestTestCase extends TestCase

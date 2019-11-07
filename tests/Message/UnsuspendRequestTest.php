@@ -1,10 +1,10 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use GuzzleHttp\Psr7\Response;
-use HansAdema\MofhClient\Message\UnsuspendRequest;
-use HansAdema\MofhClient\Message\UnsuspendResponse;
+use InfinityFree\MofhClient\Message\UnsuspendRequest;
+use InfinityFree\MofhClient\Message\UnsuspendResponse;
 
 class UnsuspendRequestTest extends RequestTestCase
 {

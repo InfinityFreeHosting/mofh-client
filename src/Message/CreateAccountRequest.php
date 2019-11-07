@@ -1,6 +1,6 @@
 <?php
 
-namespace HansAdema\MofhClient\Message;
+namespace InfinityFree\MofhClient\Message;
 
 /**
  * @method CreateAccountRequest send() Send the request.

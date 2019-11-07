@@ -1,10 +1,10 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use GuzzleHttp\Psr7\Response;
-use HansAdema\MofhClient\Message\AvailabilityRequest;
-use HansAdema\MofhClient\Message\AvailabilityResponse;
+use InfinityFree\MofhClient\Message\AvailabilityRequest;
+use InfinityFree\MofhClient\Message\AvailabilityResponse;
 
 class AvailabilityRequestTest extends RequestTestCase
 {

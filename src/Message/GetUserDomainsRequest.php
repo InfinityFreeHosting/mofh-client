@@ -1,6 +1,6 @@
 <?php
 
-namespace HansAdema\MofhClient\Message;
+namespace InfinityFree\MofhClient\Message;
 
 /**
  * @method GetUserDomainsResponse send() Send the request.

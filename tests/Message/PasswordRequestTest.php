@@ -1,10 +1,10 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use GuzzleHttp\Psr7\Response;
-use HansAdema\MofhClient\Message\PasswordRequest;
-use HansAdema\MofhClient\Message\PasswordResponse;
+use InfinityFree\MofhClient\Message\PasswordRequest;
+use InfinityFree\MofhClient\Message\PasswordResponse;
 
 class PasswordRequestTest extends RequestTestCase
 {

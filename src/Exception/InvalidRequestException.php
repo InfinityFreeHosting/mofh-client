@@ -1,6 +1,6 @@
 <?php
 
-namespace HansAdema\MofhClient\Exception;
+namespace InfinityFree\MofhClient\Exception;
 
 class InvalidRequestException extends \Exception
 {

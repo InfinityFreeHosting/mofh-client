@@ -1,10 +1,10 @@
 <?php
 
-namespace HansAdema\MofhClient\Tests\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use GuzzleHttp\Psr7\Response;
-use HansAdema\MofhClient\Message\CreateAccountRequest;
-use HansAdema\MofhClient\Message\CreateAccountResponse;
+use InfinityFree\MofhClient\Message\CreateAccountRequest;
+use InfinityFree\MofhClient\Message\CreateAccountResponse;
 
 class CreateAccountRequestTest extends RequestTestCase
 {

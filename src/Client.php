@@ -1,15 +1,15 @@
 <?php
 
-namespace HansAdema\MofhClient;
+namespace InfinityFree\MofhClient;
 
 use GuzzleHttp\Client as Guzzle;
-use HansAdema\MofhClient\Message\AbstractRequest;
-use HansAdema\MofhClient\Message\AvailabilityRequest;
-use HansAdema\MofhClient\Message\CreateAccountRequest;
-use HansAdema\MofhClient\Message\GetUserDomainsRequest;
-use HansAdema\MofhClient\Message\PasswordRequest;
-use HansAdema\MofhClient\Message\SuspendRequest;
-use HansAdema\MofhClient\Message\UnsuspendRequest;
+use InfinityFree\MofhClient\Message\AbstractRequest;
+use InfinityFree\MofhClient\Message\AvailabilityRequest;
+use InfinityFree\MofhClient\Message\CreateAccountRequest;
+use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
+use InfinityFree\MofhClient\Message\PasswordRequest;
+use InfinityFree\MofhClient\Message\SuspendRequest;
+use InfinityFree\MofhClient\Message\UnsuspendRequest;
 use RuntimeException;
 
 class Client

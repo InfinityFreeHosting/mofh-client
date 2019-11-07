@@ -1,9 +1,9 @@
 <?php
 
-namespace HansAdema\MofhClient\Message;
+namespace InfinityFree\MofhClient\Message;
 
 use GuzzleHttp\Client;
-use HansAdema\MofhClient\Exception\InvalidRequestException;
+use InfinityFree\MofhClient\Exception\InvalidRequestException;
 use RuntimeException;
 
 abstract class AbstractRequest

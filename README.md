@@ -37,7 +37,7 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
 ### Example
 
 ```php
-use \HansAdema\MofhClient\Client;
+use \InfinityFree\MofhClient\Client;
 
 // Create a new API client with your API credentials.
 $client = Client::create([
