@@ -23,6 +23,7 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
 - suspend
     - username: The unique, 8 character identifier of the account.
     - reason: A string with information about why you are suspending the account.
+    - linked: If true, related accounts will be suspended as well.
 - unsuspend
     - username: The unique, 8 character identifier of the account.
 - password

@@ -181,7 +181,7 @@ class Client
      * - password: The FTP/control panel/database password for the account
      * - email: The contact e-mail address of the owner
      * - domain: The primary domain name of the account
-     * - plan: The hosting plan to create the acccount on
+     * - plan: The hosting plan to create the account on
      *
      * @param array $parameters
      * @return CreateAccountRequest
@@ -197,6 +197,7 @@ class Client
      * Parameters:
      * - username: The custom username
      * - reason: The reason why the account was suspended
+     * - linked: If true, related accounts will be suspended as well
      *
      * @param array $parameters
      * @return SuspendRequest

@@ -17,6 +17,16 @@ class SuspendRequest extends AbstractRequest
         return $this->setParameter('reason', $reason);
     }
 
+    public function getLinked()
+    {
+        return $this->getParameter('linked');
+    }
+
+    public function setLinked($linked)
+    {
+        return $this->setParameter('linked', $linked);
+    }
+
     public function sendData($data)
     {
         $httpResponse = $this->sendRequest('suspendacct', $data);
@@ -31,6 +41,7 @@ class SuspendRequest extends AbstractRequest
         return [
             'user' => $this->getUsername(),
             'reason' => $this->getReason(),
+            'linked' => $this->getLinked() ? '1' : '0',
         ];
     }
 }

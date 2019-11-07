@@ -32,6 +32,7 @@ class SuspendRequestTest extends RequestTestCase
         $this->assertEquals([
             'user' => $this->requestData['username'],
             'reason' => $this->requestData['reason'],
+            'linked' => '0',
         ], $data);
     }
 
