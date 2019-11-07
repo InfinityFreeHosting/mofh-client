@@ -6,8 +6,9 @@ An API client to use the free hosting system from [MyOwnFreeHost](http://myownfr
 ## Installation
 
 This package is best installed through Composer:
+
 ```bash
-composer require hansadema/mofh-client
+composer require infinityfree/mofh-client
 ```
 
 ## Usage
