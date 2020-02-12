@@ -1,5 +1,5 @@
 # MyOwnFreeHost API Client
-An API client to use the free hosting system from [MyOwnFreeHost](http://myownfreehost.net).
+An API client to use the free hosting system from [MyOwnFreeHost](https://myownfreehost.net).
 
 **IMPORTANT: THIS LIBRARY IS AIMED AT EXPERIENCED PHP DEVELOPERS. Experience with object-oriented PHP and Composer is required. If you can't use oo-PHP and Composer, don't bother with this library.**
 
@@ -12,7 +12,7 @@ composer require infinityfree/mofh-client
 ```
 
 ## Usage
-Before you can get started, you need to get the API credentials from MyOwnFreeHost. Login to the [reseller panel](http://panel.myownfreehost.net), go to API -> Setup WHM API -> select the domain you want to configure. Copy the API Username and API password and set your own IP address as the Allowed IP Address (the IP address of your computer, server, or wherever you want to use this API client).
+Before you can get started, you need to get the API credentials from MyOwnFreeHost. Login to the [reseller panel](https://panel.myownfreehost.net), go to API -> Setup WHM API -> select the domain you want to configure. Copy the API Username and API password and set your own IP address as the Allowed IP Address (the IP address of your computer, server, or wherever you want to use this API client).
 
 The MyOwnFreeHost API exposes the following methods. The available parameters are listed below.
 - createAccount
@@ -34,6 +34,8 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
     - domain: The domain name or subdomain to check.
 - getUserDomains
     - username: The vistaPanel login username (e.g. abcd_12345678).
+- getDomainUser
+    - domain: The domain name to search for.
 
 ### Example
 
@@ -69,7 +71,7 @@ if ($response->isSuccessful()) {
 
 ## License
 
-Copyright 2019 Hans Adema
+Copyright 2020 Hans Adema
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
