@@ -25,17 +25,6 @@ class GetDomainUserRequestTest extends RequestTestCase
         $this->request->initialize($this->requestData);
     }
 
-    public function testNullServerResponse()
-    {
-        $this->mockHandler->append(new Response(200, [], 'null'));
-
-        $response = $this->request->send();
-        $this->assertInstanceOf(GetDomainUserResponse::class, $response);
-        $this->assertEquals(null, $response->getStatus());
-
-        $this->assertValidGetCall('getdomainuser');
-    }
-
     public function testGetData()
     {
         $data = $this->request->getData();
@@ -59,10 +48,27 @@ class GetDomainUserRequestTest extends RequestTestCase
         $response = $this->request->send();
         $this->assertInstanceOf(GetDomainUserResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
+        $this->assertTrue($response->isFound());
         $this->assertEquals($domain, $response->getDomain());
         $this->assertEquals('ACTIVE', $response->getStatus());
         $this->assertEquals($webRoot, $response->getDocumentRoot());
         $this->assertEquals($username, $response->getUsername());
+
+        $this->assertValidGetCall('getdomainuser');
+    }
+
+    public function testSendReturnsNull()
+    {
+        $this->mockHandler->append(new Response(200, [], 'null'));
+
+        $response = $this->request->send();
+        $this->assertInstanceOf(GetDomainUserResponse::class, $response);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertFalse($response->isFound());
+        $this->assertNull($response->getDomain());
+        $this->assertNull($response->getStatus());
+        $this->assertNull($response->getDocumentRoot());
+        $this->assertNull($response->getUsername());
 
         $this->assertValidGetCall('getdomainuser');
     }

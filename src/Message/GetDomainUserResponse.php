@@ -11,12 +11,18 @@ class GetDomainUserResponse extends AbstractResponse
 
     public function parseResponse()
     {
-        $this->data = (string)$this->response->getBody();
+        $responseBody = (string)$this->response->getBody();
 
-        $data = json_decode($this->data, true);
+        if (strpos($responseBody, '[') === 0) {
+            $this->data = json_decode($responseBody, true);
 
-        if ($data && count($data) == 4) {
-            list($this->status, $this->domain, $this->documentRoot, $this->username) = $data;
+            if ($this->data && count($this->data) == 4) {
+                list($this->status, $this->domain, $this->documentRoot, $this->username) = $this->data;
+            }
+        } elseif ($responseBody === 'null') {
+            $this->data = null;
+        } else {
+            $this->data = $responseBody;
         }
     }
 
@@ -37,7 +43,17 @@ class GetDomainUserResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        return strpos($this->getData(), '[') === 0 || trim($this->getData()) == 'null';
+        return $this->data === null || is_array($this->data);
+    }
+
+    /**
+     * Check if the domain was found.
+     *
+     * @return bool
+     */
+    public function isFound()
+    {
+        return $this->data != null;
     }
 
     /**
