@@ -6,6 +6,7 @@ use GuzzleHttp\Client as Guzzle;
 use InfinityFree\MofhClient\Message\AbstractRequest;
 use InfinityFree\MofhClient\Message\AvailabilityRequest;
 use InfinityFree\MofhClient\Message\CreateAccountRequest;
+use InfinityFree\MofhClient\Message\GetDomainUserRequest;
 use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
 use InfinityFree\MofhClient\Message\PasswordRequest;
 use InfinityFree\MofhClient\Message\SuspendRequest;
@@ -262,5 +263,19 @@ class Client
     public function getUserDomains(array $parameters = array())
     {
         return $this->createRequest(GetUserDomainsRequest::class, $parameters);
+    }
+
+    /**
+     * Get the user details corresponding to a domain name.
+     *
+     * Parameters:
+     * - domain
+     *
+     * @param array $parameters
+     * @return GetDomainUserRequest
+     */
+    public function getDomainUser(array $parameters = array())
+    {
+        return $this->createRequest(GetDomainUserRequest::class, $parameters);
     }
 }

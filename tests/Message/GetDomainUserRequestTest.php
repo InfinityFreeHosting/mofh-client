@@ -3,11 +3,11 @@
 namespace Tests\Unit\MofhClient\Message;
 
 use GuzzleHttp\Psr7\Response;
-use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
-use InfinityFree\MofhClient\Message\GetUserDomainsResponse;
+use InfinityFree\MofhClient\Message\GetDomainUserRequest;
+use InfinityFree\MofhClient\Message\GetDomainUserResponse;
 use InfinityFree\MofhClient\Tests\Message\RequestTestCase;
 
-class GetUserDomainsRequestTest extends RequestTestCase
+class GetDomainUserRequestTest extends RequestTestCase
 {
     /**
      * @var array
@@ -17,10 +17,10 @@ class GetUserDomainsRequestTest extends RequestTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->request = new GetUserDomainsRequest($this->guzzle);
+        $this->request = new GetDomainUserRequest($this->guzzle);
 
         $this->requestData = array_merge($this->defaultParameters, [
-            'username' => $this->faker->userName,
+            'domain' => $this->faker->domainName,
         ]);
         $this->request->initialize($this->requestData);
     }
@@ -30,10 +30,10 @@ class GetUserDomainsRequestTest extends RequestTestCase
         $this->mockHandler->append(new Response(200, [], 'null'));
 
         $response = $this->request->send();
-        $this->assertInstanceOf(GetUserDomainsResponse::class, $response);
+        $this->assertInstanceOf(GetDomainUserResponse::class, $response);
         $this->assertEquals(null, $response->getStatus());
 
-        $this->assertValidGetCall('getuserdomains');
+        $this->assertValidGetCall('getdomainuser');
     }
 
     public function testGetData()
@@ -41,7 +41,7 @@ class GetUserDomainsRequestTest extends RequestTestCase
         $data = $this->request->getData();
 
         $this->assertEquals([
-            'username' => $this->requestData['username'],
+            'domain' => $this->requestData['domain'],
             'api_user' => $this->defaultParameters['apiUsername'],
             'api_key' => $this->defaultParameters['apiPassword'],
         ], $data);
@@ -49,21 +49,22 @@ class GetUserDomainsRequestTest extends RequestTestCase
 
     public function testSendSuccessful()
     {
-        $domains = [$this->faker->domainName, $this->faker->domainName];
-
-        $responseData = array_map(function ($domain) {
-            return ['ACTIVE', $domain];
-        }, $domains);
+        $domain = $this->faker->domainName;
+        $username = 'test_' . $this->faker->randomNumber(8);
+        $webRoot = '/home/vol12_3/' . $domain . '/' . $username . '/htdocs';
+        $responseData = ['ACTIVE', $domain, $webRoot, $username];
 
         $this->mockHandler->append(new Response(200, [], json_encode($responseData)));
 
         $response = $this->request->send();
-        $this->assertInstanceOf(GetUserDomainsResponse::class, $response);
+        $this->assertInstanceOf(GetDomainUserResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
-        $this->assertEquals($domains, $response->getDomains());
+        $this->assertEquals($domain, $response->getDomain());
         $this->assertEquals('ACTIVE', $response->getStatus());
+        $this->assertEquals($webRoot, $response->getDocumentRoot());
+        $this->assertEquals($username, $response->getUsername());
 
-        $this->assertValidGetCall('getuserdomains');
+        $this->assertValidGetCall('getdomainuser');
     }
 
     public function testSendFailed()
@@ -71,11 +72,11 @@ class GetUserDomainsRequestTest extends RequestTestCase
         $this->mockHandler->append(new Response(200, [], 'The data is not valid.'));
 
         $response = $this->request->send();
-        $this->assertInstanceOf(GetUserDomainsResponse::class, $response);
+        $this->assertInstanceOf(GetDomainUserResponse::class, $response);
         $this->assertFalse($response->isSuccessful());
         $this->assertEquals('The data is not valid.', $response->getMessage());
 
-        $this->assertValidGetCall('getuserdomains');
+        $this->assertValidGetCall('getdomainuser');
     }
 
     protected function assertValidGetCall($function)
