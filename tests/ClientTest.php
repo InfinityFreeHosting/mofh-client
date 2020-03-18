@@ -25,7 +25,7 @@ class ClientTest extends TestCase
      */
     public $faker;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->client = new Client();
         $this->faker = FakerFactory::create();
