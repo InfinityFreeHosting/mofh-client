@@ -22,7 +22,7 @@ class AbstractRequestTest extends TestCase
      */
     public $faker;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->request = new TestRequest(new Guzzle());

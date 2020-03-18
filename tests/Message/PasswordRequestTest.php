@@ -13,7 +13,7 @@ class PasswordRequestTest extends RequestTestCase
      */
     public $requestData;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->request = new PasswordRequest($this->guzzle);

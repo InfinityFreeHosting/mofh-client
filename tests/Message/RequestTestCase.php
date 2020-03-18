@@ -53,7 +53,7 @@ class RequestTestCase extends TestCase
      */
     public $request;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->container = [];
         $this->mockHandler = new MockHandler();

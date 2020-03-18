@@ -8,7 +8,7 @@ use InfinityFree\MofhClient\Message\AvailabilityResponse;
 
 class AvailabilityRequestTest extends RequestTestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->request = new AvailabilityRequest($this->guzzle);
