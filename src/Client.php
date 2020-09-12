@@ -28,7 +28,7 @@ class Client
     /**
      * Create a new gateway instance
      *
-     * @param Guzzle $httpClient A HTTP client to make API calls with
+     * @param Guzzle|null $httpClient A HTTP client to make API calls with
      */
     public function __construct(Guzzle $httpClient = null)
     {

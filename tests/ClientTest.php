@@ -31,11 +31,6 @@ class ClientTest extends TestCase
         $this->faker = FakerFactory::create();
     }
 
-    public function testConstruct()
-    {
-        new Client();
-    }
-
     public function testCreate()
     {
         $client = Client::create();
