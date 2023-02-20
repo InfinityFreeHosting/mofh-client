@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\MofhClient\Message;
+namespace InfinityFree\MofhClient\Tests\Message;
 
 use GuzzleHttp\Psr7\Response;
 use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
