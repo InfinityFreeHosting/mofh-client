@@ -22,7 +22,7 @@ jobs:
         php_version: "${{ matrix.php_version }}"
     - uses: php-actions/phpunit@v3
       with:
-        configuration: "phpunit.xml.dist"
+        configuration: "phpunit.xml"
         php_version: "${{ matrix.php_version }}"
         version: "9"
 
