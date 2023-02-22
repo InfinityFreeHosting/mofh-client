@@ -13,9 +13,7 @@ class UnsuspendResponse extends AbstractResponse
     {
         parent::parseResponse();
 
-        $matches = [];
-
-        if (!$this->isSuccessful()) {
+        if (! $this->isSuccessful()) {
             if (preg_match('/account is NOT currently suspended \(status : (\w*) \)/', $this->getMessage(), $matches)) {
                 if (trim($matches[1]) == '') {
                     $this->status = 'd';
@@ -33,10 +31,8 @@ class UnsuspendResponse extends AbstractResponse
      * - a: active
      * - r: reactivating
      * - c: closing
-     *
-     * @return string|null
      */
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }

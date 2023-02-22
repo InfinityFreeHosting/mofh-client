@@ -25,3 +25,12 @@ jobs:
         configuration: "phpunit.xml.dist"
         php_version: "${{ matrix.php_version }}"
         version: "9"
+
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: php-actions/composer@v6
+    - uses: actions/setup-python@v3
+    - uses: pre-commit/action@v3.0.0

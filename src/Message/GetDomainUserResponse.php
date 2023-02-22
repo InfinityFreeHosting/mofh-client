@@ -4,74 +4,67 @@ namespace InfinityFree\MofhClient\Message;
 
 class GetDomainUserResponse extends AbstractResponse
 {
-    protected $status = null;
-    protected $domain = null;
-    protected $documentRoot = null;
-    protected $username = null;
+    protected $status;
 
-    public function parseResponse()
+    protected $domain;
+
+    protected $username;
+
+    protected $documentRoot;
+
+    protected function parseResponse()
     {
-        $responseBody = (string)$this->response->getBody();
+        $responseBody = (string) $this->response->getBody();
 
         if (strpos($responseBody, '[') === 0) {
             $this->data = json_decode($responseBody, true);
 
             if ($this->data && count($this->data) == 4) {
-                list($this->status, $this->domain, $this->documentRoot, $this->username) = $this->data;
+                [$this->status, $this->domain, $this->documentRoot, $this->username] = $this->data;
             }
         } elseif ($responseBody === 'null') {
-            $this->data = null;
+            $this->data = [];
         } else {
-            $this->data = $responseBody;
+            $this->data = trim($responseBody);
         }
     }
 
     /**
      * Get the error message, if defined.
-     *
-     * @return array|null|string
      */
-    public function getMessage()
+    public function getMessage(): ?string
     {
         return $this->isSuccessful() ? null : $this->getData();
     }
 
     /**
      * Check if the request was successful.
-     *
-     * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
-        return $this->data === null || is_array($this->data);
+        return is_array($this->data);
     }
 
     /**
      * Check if the domain was found.
-     *
-     * @return bool
      */
-    public function isFound()
+    public function isFound(): bool
     {
-        return $this->data != null;
+        return is_array($this->data) && $this->data !== [];
     }
 
     /**
      * Get the domain name which was searched for.
-     *
-     * @return string|null
      */
-    public function getDomain()
+    public function getDomain(): ?string
     {
         return $this->domain;
     }
 
     /**
      * Get the status of the account (ACTIVE or SUSPENDED).
-     *
-     * @return string|null
      */
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }
@@ -81,10 +74,8 @@ class GetDomainUserResponse extends AbstractResponse
      *
      * For example:
      * /home/volXX_X/epizy.com/host_12345678/example.com/htdocs
-     *
-     * @return string|null
      */
-    public function getDocumentRoot()
+    public function getDocumentRoot(): ?string
     {
         return $this->documentRoot;
     }
@@ -93,10 +84,8 @@ class GetDomainUserResponse extends AbstractResponse
      * Get the username of the account to which this domain name belongs.
      *
      * For example: host_12345678
-     *
-     * @return string|null
      */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }

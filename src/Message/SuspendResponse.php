@@ -4,7 +4,11 @@ namespace InfinityFree\MofhClient\Message;
 
 class SuspendResponse extends AbstractResponse
 {
-    protected $info;
+    protected $username;
+
+    protected $status;
+
+    protected $reason;
 
     /**
      * Parse the additional parameters present in the response string.
@@ -13,17 +17,15 @@ class SuspendResponse extends AbstractResponse
     {
         parent::parseResponse();
 
-        if (!$this->isSuccessful()) {
-            $matches = [];
-            if (preg_match('/account is not active so can not be suspended\s+\((.+)\)/', $this->getMessage(), $matches)) {
-                list($fullMatch, $infoString) = $matches;
-                $attributes = explode(',', $infoString, 3);
-                $this->info = [];
-
-                foreach ($attributes as $attribute) {
-                    list($key, $value) = explode(':', $attribute, 2);
-                    $this->info[trim($key)] = trim($value);
-                }
+        if (! $this->isSuccessful()) {
+            if (preg_match(
+                '/This account is not active so can not be suspended  \( vPuser : (\S+) ,  status : (\S+) , reason : (.+) \) ../',
+                $this->getMessage(),
+                $matches)
+            ) {
+                $this->username = $matches[1];
+                $this->status = $matches[2];
+                $this->reason = $matches[3];
             }
         }
     }
@@ -35,31 +37,25 @@ class SuspendResponse extends AbstractResponse
      * - x: suspended
      * - r: reactivating
      * - c: closing
-     *
-     * @return string|null
      */
-    public function getStatus()
+    public function getStatus(): ?string
     {
-        return isset($this->info['status']) ? $this->info['status'] : null;
+        return $this->status;
     }
 
     /**
      * Get the username of the account if it's not active.
-     *
-     * @return string|null
      */
-    public function getVpUsername()
+    public function getVpUsername(): ?string
     {
-        return isset($this->info['vPuser']) ? $this->info['vPuser'] : null;
+        return $this->username;
     }
 
     /**
      * Get the suspension reason of the account if it's not active.
-     *
-     * @return string|null
      */
-    public function getReason()
+    public function getReason(): ?string
     {
-        return isset($this->info['reason']) ? $this->info['reason'] : null;
+        return $this->reason;
     }
 }

@@ -2,15 +2,10 @@
 
 namespace InfinityFree\MofhClient\Message;
 
+use Psr\Http\Message\ResponseInterface;
+
 abstract class AbstractResponse
 {
-    /**
-     * The embodied request object.
-     *
-     * @var AbstractRequest
-     */
-    protected $request;
-
     /**
      * The data contained in the response.
      *
@@ -19,21 +14,15 @@ abstract class AbstractResponse
     protected $data;
 
     /**
-     * The response interface
-     *
-     * @var mixed
+     * @var ResponseInterface
      */
     protected $response;
 
     /**
-     * Constructor
-     *
-     * @param mixed $request the initiating request.
-     * @param mixed $response
+     * Create a new Response object.
      */
-    public function __construct($request, $response)
+    public function __construct(ResponseInterface $response)
     {
-        $this->request = $request;
         $this->response = $response;
 
         $this->parseResponse();
@@ -44,19 +33,19 @@ abstract class AbstractResponse
      */
     protected function parseResponse()
     {
-        $data = (string)$this->response->getBody();
+        $data = (string) $this->response->getBody();
 
-        if (strpos(trim($data), '<') !== 0) {
-            $this->data = null;
+        if (strpos(trim($data), '<') === 0) {
+            $this->data = $this->xmlToArray((array) simplexml_load_string($data));
         } else {
-            $this->data = $this->xmlToArray((array)simplexml_load_string($data));
+            $this->data = $data;
         }
     }
 
     /**
      * Get the response data.
      *
-     * @return array|null
+     * @return mixed
      */
     public function getData()
     {
@@ -65,15 +54,12 @@ abstract class AbstractResponse
 
     /**
      * Recursively convert a SimpleXMLElement array to regular arrays
-     *
-     * @param array $input
-     * @return array
      */
-    protected function xmlToArray($input)
+    protected function xmlToArray(array $input): array
     {
         foreach ($input as $key => $value) {
             if ($value instanceof \SimpleXMLElement) {
-                $value = (array)$value;
+                $value = (array) $value;
             }
 
             if (is_array($value)) {
@@ -86,24 +72,22 @@ abstract class AbstractResponse
 
     /**
      * Get the error message from the response if the call failed.
-     *
-     * @return string
      */
-    public function getMessage()
+    public function getMessage(): ?string
     {
-        if ($this->getData() && isset($this->getData()['result']['statusmsg'])) {
+        if ($this->isSuccessful()) {
+            return null;
+        } elseif ($this->getData() && isset($this->getData()['result']['statusmsg'])) {
             return trim($this->getData()['result']['statusmsg']);
         } else {
-            return (string)trim($this->response->getBody());
+            return trim($this->response->getBody());
         }
     }
 
     /**
      * Whether the action was successful
-     *
-     * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         if ($this->getData() && isset($this->getData()['result']['status'])) {
             return $this->getData()['result']['status'] == 1;
