@@ -69,7 +69,7 @@ class Client
         return $this->sendRawRequest('POST', $function, [
             'form_params' => $parameters,
             'auth' => [$this->apiUsername, $this->apiPassword],
-            'timeout' => 5.0,
+            'timeout' => 60.0,
         ]);
     }
 
@@ -88,7 +88,7 @@ class Client
                 'api_user' => $this->apiUsername,
                 'api_key' => $this->apiPassword,
             ], $parameters),
-            'timeout' => 60.0,
+            'timeout' => 5.0,
         ]);
     }
 
