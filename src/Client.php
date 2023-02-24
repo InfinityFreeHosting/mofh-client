@@ -219,7 +219,7 @@ class Client
     }
 
     /**
-     * Get the user details corresponding to a domain name.
+     * Get the account details corresponding to a domain name.
      *
      * @param  string  $domain The domain name to search for.
      *
