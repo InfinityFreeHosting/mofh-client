@@ -4,23 +4,23 @@ namespace InfinityFree\MofhClient\Message;
 
 class AvailabilityResponse extends AbstractResponse
 {
-
-    public function parseResponse()
+    public function getMessage(): ?string
     {
-        $this->data = (string)$this->response->getBody();
-    }
-
-    public function getMessage()
-    {
-        return $this->getData();
+        return $this->isSuccessful() ? null : $this->getData();
     }
 
     /**
-     * Whether the domain name is available for registration.
-     *
-     * @return bool
+     * Whether the request was successful.
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
+    {
+        return in_array($this->data, ['0', '1']);
+    }
+
+    /**
+     * Whether the selected domain name is available or not.
+     */
+    public function isAvailable(): bool
     {
         return $this->data === '1';
     }

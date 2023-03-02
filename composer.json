@@ -5,17 +5,21 @@
   "license": "Apache-2.0",
   "authors": [
     {
-      "name": "Hans Adema",
-      "email": "hans@infinityfree.net"
+      "name": "InfinityFree",
+      "email": "hello@infinityfree.net"
     }
   ],
   "require": {
+    "php": ">=7.1",
+    "ext-json": "*",
+    "ext-simplexml": "*",
     "guzzlehttp/guzzle": "~6.0|~7.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.0|^8.0|^9.0|^10.0",
+    "fakerphp/faker": "^1.7",
+    "friendsofphp/php-cs-fixer": "^3.4",
     "mockery/mockery": "^1.3",
-    "fakerphp/faker": "^1.7"
+    "phpunit/phpunit": "^7.0|^8.0|^9.0"
   },
   "autoload": {
     "psr-4": {

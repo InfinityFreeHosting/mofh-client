@@ -6,59 +6,55 @@ class PasswordResponse extends AbstractResponse
 {
     protected $status;
 
+    protected $message;
+
     protected function parseResponse()
     {
         parent::parseResponse();
 
-        if (!$this->isSuccessful()) {
-            $matches = [];
-            if (preg_match('/the account must be active to change the password\s+\((.+)\)/', $this->getMessage(), $matches)) {
-                $this->status = $matches[1];
+        if (isset($this->getData()['passwd']['status'])) {
+            if ($this->getData()['passwd']['status'] == '1') {
+                $this->status = 'a';
+            } elseif (strpos($this->getData()['passwd']['statusmsg'], 'error occured changing this password') !== false) {
+                // This error means the password is identical. We consider this to be successful (making this call idempotent).
+                $this->status = 'a';
+            } else {
+                $this->message = trim($this->getData()['passwd']['statusmsg']);
+                if (preg_match('/the account must be active to change the password\s+\((.+)\)/', $this->message, $matches)) {
+                    $this->status = $matches[1];
+                }
             }
+        } else {
+            $this->message = trim($this->response->getBody());
         }
     }
 
     /**
-     * Response Message
-     *
-     * @return null|string A response message from the payment gateway
+     * Get the error message of the response, if it failed.
      */
-    public function getMessage()
+    public function getMessage(): ?string
     {
-        if ($this->getData() && isset($this->getData()['passwd']['statusmsg'])) {
-            return trim($this->getData()['passwd']['statusmsg']);
-        } else {
-            return trim($this->response->getBody());
-        }
+        return $this->message;
     }
 
     /**
      * Whether the action was successful
-     *
-     * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
-        if ($this->getData() && isset($this->getData()['passwd']['status']) && $this->getData()['passwd']['status'] == 1) {
-            return true; // The password call was successful
-        } elseif (strpos($this->getMessage(), 'error occured changing this password') !== false) {
-            return true; // The password is identical (which is technically identical to be being changed successfully)
-        } else {
-            return false;
-        }
+        return $this->status == 'a';
     }
 
     /**
      * Get the status of the account if the account is not active.
      *
      * The result is one of the following chars:
+     * - a: active
      * - x: suspended
      * - r: reactivating
      * - c: closing
-     *
-     * @return string
      */
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }

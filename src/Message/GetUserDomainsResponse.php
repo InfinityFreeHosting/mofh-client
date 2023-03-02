@@ -2,11 +2,21 @@
 
 namespace InfinityFree\MofhClient\Message;
 
+use InfinityFree\MofhClient\Exception\MismatchedStatusesException;
+
 class GetUserDomainsResponse extends AbstractResponse
 {
-    public function parseResponse()
+    protected function parseResponse()
     {
-        $this->data = (string)$this->response->getBody();
+        $responseBody = (string) $this->response->getBody();
+
+        if (strpos($responseBody, '[') === 0) {
+            $this->data = json_decode($responseBody, true);
+        } elseif ($responseBody === 'null') {
+            $this->data = [];
+        } else {
+            $this->data = trim($responseBody);
+        }
     }
 
     /**
@@ -14,63 +24,45 @@ class GetUserDomainsResponse extends AbstractResponse
      *
      * @return array|null|string
      */
-    public function getMessage()
+    public function getMessage(): ?string
     {
         return $this->isSuccessful() ? null : $this->getData();
     }
 
     /**
      * Check if the request was successful.
-     *
-     * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
-        return strpos($this->getData(), '[') === 0 || trim($this->getData()) == 'null';
+        return is_array($this->data);
     }
 
     /**
      * Get the list of domains on the account.
-     *
-     * @return array
      */
-    public function getDomains()
+    public function getDomains(): array
     {
-        if ($this->isSuccessful()) {
-            if (trim($this->getData()) == 'null') {
-                return [];
-            } else {
-                return array_map(function ($item) {
-                    return $item[1];
-                }, json_decode($this->getData(), true));
-            }
-        } else {
-            return [];
-        }
+        return array_map(function ($item) {
+            return $item[1];
+        }, is_array($this->data) ? $this->data : []);
     }
 
     /**
-     * Get the status of the account.
+     * Get the status of the account, either ACTIVE or SUSPENDED.
      *
-     * @return string|null
+     * @throws MismatchedStatusesException
      */
-    public function getStatus()
+    public function getStatus(): ?string
     {
-        if ($this->isSuccessful()) {
-            $data = json_decode($this->getData(), true);
-            
-            if ($data == null) {
-                return null;
-            }
-
+        if (is_array($this->data)) {
             $statuses = array_unique(array_map(function ($item) {
                 return $item[0];
-            }, $data));
+            }, $this->data));
 
             if (count($statuses) == 1) {
                 return $statuses[0];
             } elseif (count($statuses) > 1) {
-                throw new \RuntimeException('The account domains have different statuses: ' . $data);
+                throw new MismatchedStatusesException('The account domains have different statuses: '.implode($statuses));
             } else {
                 return null;
             }

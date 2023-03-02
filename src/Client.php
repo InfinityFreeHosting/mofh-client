@@ -3,279 +3,234 @@
 namespace InfinityFree\MofhClient;
 
 use GuzzleHttp\Client as Guzzle;
-use InfinityFree\MofhClient\Message\AbstractRequest;
-use InfinityFree\MofhClient\Message\AvailabilityRequest;
-use InfinityFree\MofhClient\Message\CreateAccountRequest;
-use InfinityFree\MofhClient\Message\GetDomainUserRequest;
-use InfinityFree\MofhClient\Message\GetUserDomainsRequest;
-use InfinityFree\MofhClient\Message\PasswordRequest;
-use InfinityFree\MofhClient\Message\SuspendRequest;
-use InfinityFree\MofhClient\Message\UnsuspendRequest;
-use RuntimeException;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use InfinityFree\MofhClient\Exception\MofhClientHttpException;
+use InfinityFree\MofhClient\Message\AvailabilityResponse;
+use InfinityFree\MofhClient\Message\CreateAccountResponse;
+use InfinityFree\MofhClient\Message\GetDomainUserResponse;
+use InfinityFree\MofhClient\Message\GetUserDomainsResponse;
+use InfinityFree\MofhClient\Message\PasswordResponse;
+use InfinityFree\MofhClient\Message\SuspendResponse;
+use InfinityFree\MofhClient\Message\UnsuspendResponse;
+use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
     /**
-     * @var Client
+     * @var ClientInterface
      */
     protected $httpClient;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $parameters;
+    protected $apiUsername;
+
+    /**
+     * @var string
+     */
+    protected $apiPassword;
+
+    /**
+     * @var string
+     */
+    protected $apiUrl;
 
     /**
      * Create a new gateway instance
      *
-     * @param Guzzle|null $httpClient A HTTP client to make API calls with
+     * @param  string  $apiUsername The API Username from MyOwnFreeHost.
+     * @param  string  $apiPassword The API Password from MyOwnFreeHost.
+     * @param  string  $apiUrl The URL of MyOwnFreeHost.net to use.
+     * @param  ClientInterface|null  $httpClient An HTTP client to make API calls with.
      */
-    public function __construct(Guzzle $httpClient = null)
+    public function __construct(string $apiUsername, string $apiPassword, string $apiUrl = 'https://panel.myownfreehost.net/xml-api/', ClientInterface $httpClient = null)
     {
-        $this->httpClient = $httpClient ?: $this->getDefaultHttpClient();
-        $this->initialize();
+        $this->apiUsername = $apiUsername;
+        $this->apiPassword = $apiPassword;
+        $this->apiUrl = $apiUrl;
+
+        $this->httpClient = $httpClient ?: new Guzzle([
+            'connect_timeout' => 5.0,
+        ]);
     }
 
     /**
-     * @return Guzzle
-     */
-    protected function getDefaultHttpClient()
-    {
-        return new Guzzle();
-    }
-
-    /**
-     * Create a new client
+     * Send a POST query to the XML API.
      *
-     * @param array $parameters See getDefaultParameters()
-     * @return Client
+     * @param  string  $function The MOFH API function name
+     * @param  array  $parameters The API function arguments
+     *
+     * @throws MofhClientHttpException
      */
-    public static function create(array $parameters = [])
+    protected function sendPostRequest(string $function, array $parameters): ResponseInterface
     {
-        $client = new self();
-        $client->initialize($parameters);
-        return $client;
+        return $this->sendRawRequest('POST', $function, [
+            'form_params' => $parameters,
+            'auth' => [$this->apiUsername, $this->apiPassword],
+            'timeout' => 60.0,
+        ]);
     }
 
     /**
-     * Get the available parameters and their default settings
+     * Send a GET query to the XML API.
      *
-     * @return array
+     * @param  string  $function The MOFH API function name
+     * @param  array  $parameters The API function arguments
+     *
+     * @throws MofhClientHttpException
      */
-    public function getDefaultParameters()
+    protected function sendGetRequest(string $function, array $parameters): ResponseInterface
     {
-        return [
-            'apiUsername' => '',
-            'apiPassword' => '',
-            'apiUrl' => 'https://panel.myownfreehost.net/xml-api/',
-            'plan' => '',
-        ];
+        return $this->sendRawRequest('GET', $function, [
+            'query' => array_replace([
+                'api_user' => $this->apiUsername,
+                'api_key' => $this->apiPassword,
+            ], $parameters),
+            'timeout' => 5.0,
+        ]);
     }
 
     /**
-     * Initialize this gateway with default parameters
+     * Send the actual HTTP request to the API.
      *
-     * @param  array $parameters
-     * @return $this
+     * @throws MofhClientHttpException
      */
-    public function initialize(array $parameters = array())
+    private function sendRawRequest(string $method, string $function, array $requestOptions = []): ResponseInterface
     {
-        $this->parameters = $parameters;
-
-        // set default parameters
-        foreach (array_replace($this->getDefaultParameters(), $parameters) as $key => $value) {
-            $this->setParameter($key, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get a single parameter.
-     *
-     * @param string $key The parameter key
-     * @return mixed
-     */
-    protected function getParameter($key)
-    {
-        if (isset($this->parameters[$key])) {
-            return $this->parameters[$key];
-        } else {
-            return null;
+        try {
+            return $this->httpClient->request($method, $this->apiUrl.$function, $requestOptions);
+        } catch (GuzzleException $e) {
+            throw new MofhClientHttpException('The MOFH API returned a HTTP error: '.$e->getMessage(), 0, $e);
         }
     }
 
     /**
-     * Set a single parameter
+     * Create a new hosting account.
      *
-     * @param string $key The parameter key
-     * @param mixed $value The value to set
-     * @return $this
-     * @throws RuntimeException if a request parameter is modified after the request has been sent.
+     * @param  string  $username A custom username, max. 8 characters of letters and numbers.
+     * @param  string  $password A password used to access the control panel, FTP and database.
+     * @param  string  $email The contact email address of the account owner.
+     * @param  string  $domain The primary domain name of the account.
+     * @param  string  $plan The name of the plan to use at MyOwnFreeHost. Create this in MOFH -> Quotas & Packages -> Set Packages.
+     *
+     * @throws MofhClientHttpException
      */
-    protected function setParameter($key, $value)
+    public function createAccount(string $username, string $password, string $email, string $domain, string $plan): CreateAccountResponse
     {
-        $this->parameters[$key] = $value;
+        $response = $this->sendPostRequest('createacct', [
+            'username' => $username,
+            'password' => $password,
+            'contactemail' => $email,
+            'domain' => $domain,
+            'plan' => $plan,
+        ]);
 
-        return $this;
-    }
-
-    public function setApiUsername($username)
-    {
-        return $this->setParameter('apiUsername', $username);
-    }
-
-    public function getApiUsername()
-    {
-        return $this->getParameter('apiUsername');
-    }
-
-    public function setApiPassword($password)
-    {
-        return $this->setParameter('apiPassword', $password);
-    }
-
-    public function getApiPassword()
-    {
-        return $this->getParameter('apiPassword');
-    }
-
-    public function setPlan($plan)
-    {
-        return $this->setParameter('plan', $plan);
-    }
-
-    public function getPlan()
-    {
-        return $this->getParameter('plan');
-    }
-
-    public function setApiUrl($url)
-    {
-        return $this->setParameter('apiUrl', $url);
-    }
-
-    public function getApiUrl()
-    {
-        return $this->getParameter('apiUrl');
+        return new CreateAccountResponse($response);
     }
 
     /**
-     * Create and initialize a request object
+     * Suspend an account on MyOwnFreeHost.
      *
-     * @see AbstractRequest
-     * @param string $class The request class name
-     * @param array $parameters
-     * @return AbstractRequest
+     * @param  string  $username The custom username of the account. This is the 8 character username used in createAccount, not the FTP username.
+     * @param  string  $reason The reason why the account is suspended. Will be prefixed with RES_CLOSE by the system.
+     * @param  bool  $linked If set to true, related accounts (from the same email or IP address) will be suspended as well.
+     *
+     * @throws MofhClientHttpException
      */
-    protected function createRequest($class, array $parameters)
+    public function suspend(string $username, string $reason, bool $linked = false): SuspendResponse
     {
-        $obj = new $class($this->httpClient);
-        return $obj->initialize(array_replace($this->parameters, $parameters));
+        $response = $this->sendPostRequest('suspendacct', [
+            'user' => $username,
+            'reason' => $reason,
+            'linked' => $linked ? '1' : '0',
+        ]);
+
+        return new SuspendResponse($response);
     }
 
     /**
-     * Create a new hosting account
+     * Unsuspend the account with the given username at MyOwnFreeHost.
      *
-     * Parameters:
-     * - username: A custom username, max. 8 characters of letters and numbers
-     * - password: The FTP/control panel/database password for the account
-     * - email: The contact e-mail address of the owner
-     * - domain: The primary domain name of the account
-     * - plan: The hosting plan to create the account on
+     * @param  string  $username The custom username of the account. This is the 8 character username used in createAccount, not the FTP username.
      *
-     * @param array $parameters
-     * @return CreateAccountRequest
+     * @throws MofhClientHttpException
      */
-    public function createAccount(array $parameters = array())
+    public function unsuspend(string $username): UnsuspendResponse
     {
-        return $this->createRequest(CreateAccountRequest::class, $parameters);
+        $response = $this->sendPostRequest('unsuspendacct', [
+            'user' => $username,
+        ]);
+
+        return new UnsuspendResponse($response);
     }
 
     /**
-     * Suspend an account on MOFH
+     * Change the password of an (active) account.
      *
-     * Parameters:
-     * - username: The custom username
-     * - reason: The reason why the account was suspended
-     * - linked: If true, related accounts will be suspended as well
+     * @param  string  $username The custom username of the account. This is the 8 character username used in createAccount, not the FTP username.
+     * @param  string  $password The new password used to access the control panel, FTP and database.
      *
-     * @param array $parameters
-     * @return SuspendRequest
+     * @throws MofhClientHttpException
      */
-    public function suspend(array $parameters = array())
+    public function password(string $username, string $password): PasswordResponse
     {
-        return $this->createRequest(SuspendRequest::class, $parameters);
+        $response = $this->sendPostRequest('passwd', [
+            'user' => $username,
+            'pass' => $password,
+        ]);
+
+        return new PasswordResponse($response);
     }
 
     /**
-     * Unsuspend the account with the given username at MOFH
+     * Check whether a domain is available to use at MyOwnFreeHost.
      *
-     * Parameters:
-     * - username: The custom username
+     * This checks if the domain is in use on another account or not. It doesn't check
      *
-     * @param array $parameters
-     * @return UnsuspendRequest
+     * @param  string  $domain The domain name or subdomain to check.
+     *
+     * @throws MofhClientHttpException
      */
-    public function unsuspend(array $parameters = array())
+    public function availability(string $domain): AvailabilityResponse
     {
-        return $this->createRequest(UnsuspendRequest::class, $parameters);
-    }
+        $response = $this->sendGetRequest('checkavailable', [
+            'domain' => $domain,
+        ]);
 
-    /**
-     * Change the password of an (active) account
-     *
-     * Parameters:
-     * - username: The custom username
-     * - password: The new password
-     *
-     * @param array $parameters
-     * @return PasswordRequest
-     */
-    public function password(array $parameters = array())
-    {
-        return $this->createRequest(PasswordRequest::class, $parameters);
-    }
-
-    /**
-     * Check whether a domain is available at MOFH
-     *
-     * Parameters:
-     * - domain: The domain name or subdomain to check
-     *
-     * @param array $parameters
-     * @return AvailabilityRequest
-     */
-    public function availability(array $parameters = array())
-    {
-        return $this->createRequest(AvailabilityRequest::class, $parameters);
+        return new AvailabilityResponse($response);
     }
 
     /**
      * Get the domains belonging to an account.
      *
-     * Parameters:
-     * - username
+     * @param  string  $username The generated username for the account (e.g. test_12345678).
      *
-     * @param array $parameters
-     * @return GetUserDomainsRequest
+     * @throws MofhClientHttpException
      */
-    public function getUserDomains(array $parameters = array())
+    public function getUserDomains(string $username): GetUserDomainsResponse
     {
-        return $this->createRequest(GetUserDomainsRequest::class, $parameters);
+        $response = $this->sendGetRequest('getuserdomains', [
+            'username' => $username,
+        ]);
+
+        return new GetUserDomainsResponse($response);
     }
 
     /**
-     * Get the user details corresponding to a domain name.
+     * Get the account details corresponding to a domain name.
      *
-     * Parameters:
-     * - domain
+     * @param  string  $domain The domain name to search for.
      *
-     * @param array $parameters
-     * @return GetDomainUserRequest
+     * @throws MofhClientHttpException
      */
-    public function getDomainUser(array $parameters = array())
+    public function getDomainUser(string $domain): GetDomainUserResponse
     {
-        return $this->createRequest(GetDomainUserRequest::class, $parameters);
+        $response = $this->sendGetRequest('getdomainuser', [
+            'domain' => $domain,
+        ]);
+
+        return new GetDomainUserResponse($response);
     }
 }
