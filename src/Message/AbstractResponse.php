@@ -35,8 +35,10 @@ abstract class AbstractResponse
     {
         $data = (string) $this->response->getBody();
 
-        if (strpos(trim($data), '<') === 0) {
-            $this->data = $this->xmlToArray((array) simplexml_load_string($data));
+        $xmlData = @simplexml_load_string($data, \SimpleXMLElement::class, LIBXML_NOERROR);
+
+        if ($xmlData !== false) {
+            $this->data = $this->xmlToArray((array) $xmlData);
         } else {
             $this->data = $data;
         }
