@@ -79,6 +79,33 @@ class SuspendResponseTest extends TestCase
         );
     }
 
+    public function testSuspendedWithEmptyReason()
+    {
+        $username = $this->faker->lexify('????_########');
+
+        $httpResponse = new Response(200, [], "
+<suspendacct>
+    <result>
+        <status>0</status>
+        <statusmsg>
+	This account is not active so can not be suspended  ( vPuser : {$username} ,  status : x , reason :  ) ..
+        </statusmsg>
+    </result>
+</suspendacct>
+        ");
+
+        $suspendResponse = new SuspendResponse($httpResponse);
+
+        $this->assertFalse($suspendResponse->isSuccessful());
+        $this->assertEquals('x', $suspendResponse->getStatus());
+        $this->assertEquals($username, $suspendResponse->getVpUsername());
+        $this->assertEquals('', $suspendResponse->getReason());
+        $this->assertEquals(
+            "This account is not active so can not be suspended  ( vPuser : {$username} ,  status : x , reason :  ) ..",
+            $suspendResponse->getMessage()
+        );
+    }
+
     public function testError()
     {
         $httpResponse = new Response(200, [], 'The API username you are using appears to be invalid 1. .  ');
