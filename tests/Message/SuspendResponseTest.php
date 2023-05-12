@@ -53,7 +53,7 @@ class SuspendResponseTest extends TestCase
 
     public function testNotActive()
     {
-        $username = $this->faker->lexify('????_########');
+        $username = $this->faker->bothify('????_########');
         $reason = $this->faker->sentence();
 
         $httpResponse = new Response(200, [], "
@@ -81,7 +81,7 @@ class SuspendResponseTest extends TestCase
 
     public function testSuspendedWithEmptyReason()
     {
-        $username = $this->faker->lexify('????_########');
+        $username = $this->faker->bothify('????_########');
 
         $httpResponse = new Response(200, [], "
 <suspendacct>
@@ -104,6 +104,37 @@ class SuspendResponseTest extends TestCase
             "This account is not active so can not be suspended  ( vPuser : {$username} ,  status : x , reason :  ) ..",
             $suspendResponse->getMessage()
         );
+    }
+
+    public function testSuspendedWithReasonOnMultipleLines()
+    {
+        $username = $this->faker->bothify('????_########');
+
+        $reason = $this->faker->sentence." <body>
+         <p>
+         Hello world!
+        </p>
+        </body>
+         ";
+        $encodedReason = htmlspecialchars($reason);
+
+        $httpResponse = new Response(200, [], "
+<suspendacct>
+    <result>
+        <status>0</status>
+        <statusmsg>
+	This account is not active so can not be suspended  ( vPuser : {$username} ,  status : x , reason : {$encodedReason} ) ..
+        </statusmsg>
+    </result>
+</suspendacct>
+        ");
+
+        $suspendResponse = new SuspendResponse($httpResponse);
+
+        $this->assertFalse($suspendResponse->isSuccessful());
+        $this->assertEquals('x', $suspendResponse->getStatus());
+        $this->assertEquals($username, $suspendResponse->getVpUsername());
+        $this->assertEquals(trim($reason), $suspendResponse->getReason());
     }
 
     public function testError()

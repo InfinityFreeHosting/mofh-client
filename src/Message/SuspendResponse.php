@@ -19,7 +19,7 @@ class SuspendResponse extends AbstractResponse
 
         if (! $this->isSuccessful()) {
             if (preg_match(
-                '/This account is not active so can not be suspended  \( vPuser : (\S+) ,  status : (\S+) , reason : (.*) \) ../',
+                '/This account is not active so can not be suspended  \( vPuser : (\S+) ,  status : (\S+) , reason : (.*) \) ../s',
                 $this->getMessage(),
                 $matches)
             ) {
