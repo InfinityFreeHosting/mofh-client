@@ -38,9 +38,12 @@ The MyOwnFreeHost API exposes the following methods. The available parameters ar
 - availability: Check if a given domain name is available to be added to an account.
     - domain: The domain name or subdomain to check.
 - getUserDomains: Get the domain names linked to a given account.
-    - username: The vistaPanel login username (e.g. abcd_12345678).
+    - username: The VistaPanel login username (e.g. abcd_12345678).
 - getDomainUser: Get the information of a particular hosting domain name, including the account it's hosted on and the document root.
     - domain: The domain name to search for.
+- getCname: Get the CNAME subdomain for a domain name, used for CNAME domain verification.
+    - username: The VistaPanel login username (e.g. abcd_12345678).
+    - domain: The domain name to generate the CNAME subdomain for.
 
 ### Example
 
