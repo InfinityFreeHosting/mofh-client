@@ -63,7 +63,7 @@ $createResponse = $client->createAccount(
 if ($createResponse->isSuccessful()) {
     echo "Created account with username: ".$createResponse->getVpUsername();
 } else {
-   echo 'Failed to create account: ' . $response->getMessage();
+   echo 'Failed to create account: ' . $createResponse->getMessage();
    die();
 }
 ```
