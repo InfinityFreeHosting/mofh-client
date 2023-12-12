@@ -12,6 +12,7 @@
   "require": {
     "php": ">=7.1",
     "ext-json": "*",
+    "ext-libxml": "*",
     "ext-simplexml": "*",
     "guzzlehttp/guzzle": "~6.0|~7.0"
   },

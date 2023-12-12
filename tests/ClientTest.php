@@ -13,6 +13,7 @@ use InfinityFree\MofhClient\Client;
 use InfinityFree\MofhClient\Exception\MofhClientHttpException;
 use InfinityFree\MofhClient\Message\AvailabilityResponse;
 use InfinityFree\MofhClient\Message\CreateAccountResponse;
+use InfinityFree\MofhClient\Message\GetCnameResponse;
 use InfinityFree\MofhClient\Message\GetDomainUserResponse;
 use InfinityFree\MofhClient\Message\GetUserDomainsResponse;
 use InfinityFree\MofhClient\Message\PasswordResponse;
@@ -239,5 +240,28 @@ class ClientTest extends TestCase
             'api_key' => $this->apiPassword,
             'domain' => $domain,
         ], $queryData);
+    }
+
+    public function testGetCname()
+    {
+        $username = $this->faker->bothify('????_########');
+        $domain = $this->faker->domainName();
+
+        $this->guzzleMockHandler->append(new Response(200, [], md5($domain)));
+
+        $response = $this->client->getCname($username, $domain);
+        $this->assertInstanceOf(GetCnameResponse::class, $response);
+
+        $this->assertCount(1, $this->historyContainer);
+        $request = $this->historyContainer[0]['request'];
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('/xml-api/getcname', $request->getUri()->getPath());
+        parse_str($request->getBody(), $postData);
+        $this->assertEquals([
+            'api_user' => $this->apiUsername,
+            'api_key' => $this->apiPassword,
+            'domain_name' => $domain,
+            'username' => $username,
+        ], $postData);
     }
 }

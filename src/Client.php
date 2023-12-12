@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use InfinityFree\MofhClient\Exception\MofhClientHttpException;
 use InfinityFree\MofhClient\Message\AvailabilityResponse;
 use InfinityFree\MofhClient\Message\CreateAccountResponse;
+use InfinityFree\MofhClient\Message\GetCnameResponse;
 use InfinityFree\MofhClient\Message\GetDomainUserResponse;
 use InfinityFree\MofhClient\Message\GetUserDomainsResponse;
 use InfinityFree\MofhClient\Message\PasswordResponse;
@@ -61,6 +62,7 @@ class Client
      *
      * @param  string  $function The MOFH API function name
      * @param  array  $parameters The API function arguments
+     * @return ResponseInterface
      *
      * @throws MofhClientHttpException
      */
@@ -78,6 +80,7 @@ class Client
      *
      * @param  string  $function The MOFH API function name
      * @param  array  $parameters The API function arguments
+     * @return ResponseInterface
      *
      * @throws MofhClientHttpException
      */
@@ -95,6 +98,10 @@ class Client
     /**
      * Send the actual HTTP request to the API.
      *
+     * @param string $method The HTTP method to use.
+     * @param string $function The API function to use.
+     * @param array $requestOptions Any Guzzle request parameters.
+     * @return ResponseInterface
      * @throws MofhClientHttpException
      */
     private function sendRawRequest(string $method, string $function, array $requestOptions = []): ResponseInterface
@@ -114,6 +121,7 @@ class Client
      * @param  string  $email The contact email address of the account owner.
      * @param  string  $domain The primary domain name of the account.
      * @param  string  $plan The name of the plan to use at MyOwnFreeHost. Create this in MOFH -> Quotas & Packages -> Set Packages.
+     * @return CreateAccountResponse
      *
      * @throws MofhClientHttpException
      */
@@ -136,6 +144,7 @@ class Client
      * @param  string  $username The custom username of the account. This is the 8 character username used in createAccount, not the FTP username.
      * @param  string  $reason The reason why the account is suspended. Will be prefixed with RES_CLOSE by the system.
      * @param  bool  $linked If set to true, related accounts (from the same email or IP address) will be suspended as well.
+     * @return SuspendResponse
      *
      * @throws MofhClientHttpException
      */
@@ -154,6 +163,7 @@ class Client
      * Unsuspend the account with the given username at MyOwnFreeHost.
      *
      * @param  string  $username The custom username of the account. This is the 8 character username used in createAccount, not the FTP username.
+     * @return UnsuspendResponse
      *
      * @throws MofhClientHttpException
      */
@@ -171,6 +181,7 @@ class Client
      *
      * @param  string  $username The custom username of the account. This is the 8 character username used in createAccount, not the FTP username.
      * @param  string  $password The new password used to access the control panel, FTP and database.
+     * @return PasswordResponse
      *
      * @throws MofhClientHttpException
      */
@@ -190,6 +201,7 @@ class Client
      * This checks if the domain is in use on another account or not. It doesn't check
      *
      * @param  string  $domain The domain name or subdomain to check.
+     * @return AvailabilityResponse
      *
      * @throws MofhClientHttpException
      */
@@ -206,6 +218,7 @@ class Client
      * Get the domains belonging to an account.
      *
      * @param  string  $username The generated username for the account (e.g. test_12345678).
+     * @return GetUserDomainsResponse
      *
      * @throws MofhClientHttpException
      */
@@ -222,6 +235,7 @@ class Client
      * Get the account details corresponding to a domain name.
      *
      * @param  string  $domain The domain name to search for.
+     * @return GetDomainUserResponse
      *
      * @throws MofhClientHttpException
      */
@@ -232,5 +246,26 @@ class Client
         ]);
 
         return new GetDomainUserResponse($response);
+    }
+
+    /**
+     * Get the CNAME record corresponding to this domain, used for CNAME verification.
+     *
+     * @param string $username
+     * @param string $domain
+     * @return GetCnameResponse
+     *
+     * @throws MofhClientHttpException
+     */
+    public function getCname(string $username, string $domain): GetCnameResponse
+    {
+        $response = $this->sendPostRequest('getcname', [
+            'api_user' => $this->apiUsername,
+            'api_key' => $this->apiPassword,
+            'username' => $username,
+            'domain_name' => $domain,
+        ]);
+
+        return new GetCnameResponse($response);
     }
 }
