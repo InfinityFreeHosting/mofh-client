@@ -262,7 +262,6 @@ class Client
         $response = $this->sendPostRequest('getcname', [
             'api_user' => $this->apiUsername,
             'api_key' => $this->apiPassword,
-            'username' => $username,
             'domain_name' => $domain,
         ]);
 
