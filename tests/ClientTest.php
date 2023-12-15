@@ -261,7 +261,6 @@ class ClientTest extends TestCase
             'api_user' => $this->apiUsername,
             'api_key' => $this->apiPassword,
             'domain_name' => $domain,
-            'username' => $username,
         ], $postData);
     }
 }
