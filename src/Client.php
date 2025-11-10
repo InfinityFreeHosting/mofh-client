@@ -46,7 +46,7 @@ class Client
      * @param  string  $apiUrl The URL of MyOwnFreeHost.net to use.
      * @param  ClientInterface|null  $httpClient An HTTP client to make API calls with.
      */
-    public function __construct(string $apiUsername, string $apiPassword, string $apiUrl = 'https://panel.myownfreehost.net/xml-api/', ClientInterface $httpClient = null)
+    public function __construct(string $apiUsername, string $apiPassword, string $apiUrl = 'https://panel.myownfreehost.net/xml-api/', ?ClientInterface $httpClient = null)
     {
         $this->apiUsername = $apiUsername;
         $this->apiPassword = $apiPassword;
