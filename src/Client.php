@@ -91,7 +91,7 @@ class Client
                 'api_user' => $this->apiUsername,
                 'api_key' => $this->apiPassword,
             ], $parameters),
-            'timeout' => 5.0,
+            'timeout' => 10.0,
         ]);
     }
 
