@@ -7,7 +7,8 @@
 
 An API client to use the free hosting system from [MyOwnFreeHost](https://myownfreehost.net).
 
-**IMPORTANT: THIS LIBRARY IS AIMED AT EXPERIENCED PHP DEVELOPERS. Experience with object-oriented PHP and Composer is required. If you can't use oo-PHP and Composer, don't bother with this library.**
+> [!IMPORTANT]
+> This library is aimed at experienced PHP developers. Experience with object-oriented PHP and Composer is required.
 
 ## Requirements
 
