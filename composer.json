@@ -1,16 +1,16 @@
 {
   "name": "infinityfree/mofh-client",
-  "description": "A WHM API client for MyOwnFreeHost in PHP",
+  "description": "An API client for MyOwnFreeHost in PHP",
   "minimum-stability": "stable",
   "license": "Apache-2.0",
   "authors": [
     {
       "name": "InfinityFree",
-      "email": "hello@infinityfree.net"
+      "email": "hello@infinityfree.com"
     }
   ],
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.3",
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
