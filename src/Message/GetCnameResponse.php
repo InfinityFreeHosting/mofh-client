@@ -4,12 +4,6 @@ namespace InfinityFree\MofhClient\Message;
 
 class GetCnameResponse extends AbstractResponse
 {
-    protected function parseResponse()
-    {
-        $responseBody = (string) $this->response->getBody();
-        $this->data = trim($responseBody);
-    }
-
     /**
      * Check if the request was successful.
      */

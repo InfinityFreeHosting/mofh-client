@@ -4,13 +4,17 @@ namespace InfinityFree\MofhClient\Message;
 
 class PasswordResponse extends AbstractResponse
 {
+    use HasXmlPayload {
+        HasXmlPayload::parseResponse as parseXmlResponse;
+    }
+
     protected $status;
 
     protected $message;
 
     protected function parseResponse()
     {
-        parent::parseResponse();
+        $this->parseXmlResponse();
 
         if (isset($this->getData()['passwd']['status'])) {
             if ($this->getData()['passwd']['status'] == '1') {

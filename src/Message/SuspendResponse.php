@@ -4,6 +4,10 @@ namespace InfinityFree\MofhClient\Message;
 
 class SuspendResponse extends AbstractResponse
 {
+    use HasXmlPayload {
+        HasXmlPayload::parseResponse as parseXmlResponse;
+    }
+
     protected $username;
 
     protected $status;
@@ -15,7 +19,7 @@ class SuspendResponse extends AbstractResponse
      */
     protected function parseResponse()
     {
-        parent::parseResponse();
+        $this->parseXmlResponse();
 
         if (! $this->isSuccessful()) {
             if (preg_match(

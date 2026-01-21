@@ -4,6 +4,10 @@ namespace InfinityFree\MofhClient\Message;
 
 class UnsuspendResponse extends AbstractResponse
 {
+    use HasXmlPayload {
+        HasXmlPayload::parseResponse as parseXmlResponse;
+    }
+
     protected $status;
 
     /**
@@ -11,7 +15,7 @@ class UnsuspendResponse extends AbstractResponse
      */
     protected function parseResponse()
     {
-        parent::parseResponse();
+        $this->parseXmlResponse();
 
         if (! $this->isSuccessful()) {
             if (preg_match('/account is NOT currently suspended \(status : (\w*) \)/', $this->getMessage(), $matches)) {

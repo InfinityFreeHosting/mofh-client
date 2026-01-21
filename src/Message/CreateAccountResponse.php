@@ -4,6 +4,8 @@ namespace InfinityFree\MofhClient\Message;
 
 class CreateAccountResponse extends AbstractResponse
 {
+    use HasXmlPayload;
+
     /**
      * Get the VistaPanel username of the account (like test_123456789)
      */
