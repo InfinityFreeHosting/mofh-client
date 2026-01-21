@@ -391,7 +391,7 @@ class Client
         string $comments,
         string $username,
         string $ipAddress,
-        string $domain = null
+        ?string $domain = null
     ): ReplyTicketResponse {
         $response = $this->sendPostRequest('/xml-api/supportreplyticket', [
             'api_user' => $this->apiUsername,
