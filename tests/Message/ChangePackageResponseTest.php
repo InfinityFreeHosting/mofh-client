@@ -49,7 +49,7 @@ class ChangePackageResponseTest extends TestCase
         <rawout>
         </rawout>
         <status>0</status>
-        <statusmsg>The API username you are using appears to be invalid 1..   The API username you are using appears to be invalid 2..    The API key you are using appears to be invalid 1..    The API key you are using appears to be invalid 2..    </statusmsg>
+        <statusmsg>The package name (testing) has not been defined in the reseller panel for the domain name example.com which these api keys are configured for. .   </statusmsg>
     </result>
 </changepackage>
         ");
@@ -58,10 +58,8 @@ class ChangePackageResponseTest extends TestCase
 
         $this->assertFalse($changePackageResponse->isSuccessful());
         $this->assertEquals(
-            'The API username you are using appears to be invalid 1..   '.
-            'The API username you are using appears to be invalid 2..    '.
-            'The API key you are using appears to be invalid 1..    '.
-            'The API key you are using appears to be invalid 2..',
+            'The package name (testing) has not been defined in the reseller panel for the domain name example.com '.
+            'which these api keys are configured for. .',
             $changePackageResponse->getMessage());
     }
 }
